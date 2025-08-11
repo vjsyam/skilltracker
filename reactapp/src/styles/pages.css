@@ -1,0 +1,224 @@
+.homepage {
+  padding: 20px;
+  text-align: center;
+  background: #f9f3ef; /* lightest color */
+  color: #1b3c53; /* darkest blue */
+}
+
+.hero {
+  padding: 40px;
+  margin: 20px auto;
+  max-width: 800px;
+  background: #f9f3ef; /* lightest color */
+  color: #1b3c53; /* darkest blue */
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(27, 60, 83, 0.1);
+}
+
+.features {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(27, 60, 83, 0.35); /* darkest blue with transparency */
+  z-index: 1000;
+}
+
+.modal {
+  width: 720px;
+  max-width: 94%;
+  padding: 18px;
+  border-radius: 12px;
+  background: #f9f3ef; /* lightest color */
+  color: #1b3c53; /* darkest blue */
+  box-shadow: 0 8px 20px rgba(27, 60, 83, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #d2c1b6; /* beige */
+  padding-bottom: 12px;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: #1b3c53; /* darkest blue */
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.modal-body label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.95rem;
+  color: #1b3c53; /* darkest blue */
+}
+
+.modal-body input[type="text"],
+.modal-body input[type="number"],
+.modal-body select,
+.modal-body textarea {
+  padding: 8px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: 1px solid #d2c1b6; /* beige */
+  background: #f9f3ef; /* lightest color */
+  color: #1b3c53; /* darkest blue */
+}
+
+.skills-grid {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.skills-label {
+  width: 90px;
+  font-weight: 600;
+  color: #1b3c53; /* darkest blue */
+}
+
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skill-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: #d2c1b6; /* beige */
+  border-radius: 8px;
+  color: #1b3c53; /* darkest blue */
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: 1px solid #d2c1b6; /* beige */
+}
+
+.btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #456882; /* medium blue */
+  background: #f9f3ef; /* lightest color */
+  cursor: pointer;
+  color: #1b3c53; /* darkest blue */
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn.primary {
+  background: linear-gradient(90deg, #1b3c53, #456882); /* darkest to medium blue */
+  color: #f9f3ef; /* lightest color */
+  border: none;
+}
+
+.btn.danger {
+  background: linear-gradient(90deg, #ff6b6b, #ff4b4b);
+  color: white;
+  border: none;
+}
+
+.alert {
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.alert.error {
+  background: rgba(255, 200, 200, 0.95);
+  color: #6d1b1b;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  padding: 10px;
+  border-radius: 8px;
+  background: #f9f3ef; /* lightest color */
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.employees-page {
+  padding: 24px;
+  background: #f9f3ef; /* lightest color */
+}
+
+.glass-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(249, 243, 239, 0.9); /* lightest color */
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(27, 60, 83, 0.1);
+}
+
+.glass-table th,
+.glass-table td {
+  padding: 12px 10px;
+  text-align: left;
+  border-bottom: 1px solid #d2c1b6; /* beige */
+}
+
+.glass-table th {
+  background: #456882; /* medium blue */
+  color: #f9f3ef; /* lightest color */
+  font-weight: 600;
+}
+
+.glass-table tr:last-child td {
+  border-bottom: none;
+}
+
+.glass-table tr:hover td {
+  background: rgba(210, 193, 182, 0.3); /* beige with transparency */
+}
+
+@media (max-width: 720px) {
+  .modal {
+    width: 95%;
+    padding: 12px;
+  }
+  .skills-grid {
+    flex-direction: column;
+  }
+  .skills-label {
+    width: 100%;
+  }
+  .features {
+    flex-direction: column;
+  }
+}
