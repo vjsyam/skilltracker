@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // Components
 import Navbar from "./components/Navbar";
-// import Footer from "./components/Footer";
+import Footer from "./components/Footer";
 
 // Pages
 import Home from "./pages/Home";
@@ -32,7 +32,7 @@ export default function App() {
           <Route path="/messages" element={<Messages />} />
         </Routes>
       </main>
-      {/* <Footer /> */}
+      <Footer />
     </Router>
   );
 }
