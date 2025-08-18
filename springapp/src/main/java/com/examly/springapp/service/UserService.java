@@ -27,6 +27,7 @@ public class UserService {
 
     public User createUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        // user.setPassword(user.getPassword());
         return userRepository.save(user);
     }
 
@@ -45,3 +46,62 @@ public class UserService {
         userRepository.deleteById(id);
     }
 }
+
+// package com.examly.springapp.service;
+
+// import com.examly.springapp.model.User;
+// import com.examly.springapp.repository.UserRepository;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+// import org.springframework.stereotype.Service;
+
+// import java.util.List;
+// import java.util.Optional;
+
+// @Service
+// public class UserService {
+
+//     @Autowired
+//     private UserRepository userRepository;
+
+//     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+//     public List<User> getAllUsers() {
+//         return userRepository.findAll();
+//     }
+
+//     public Optional<User> getUserById(Long id) {
+//         return userRepository.findById(id);
+//     }
+
+//     public User createUser(User user) {
+//         // Validate role
+//         if (!user.getRole().equals(User.ROLE_MANAGER)) {
+//             user.setRole(User.ROLE_EMPLOYEE); // Default to EMPLOYEE if not MANAGER
+//         }
+//         user.setPassword(passwordEncoder.encode(user.getPassword()));
+//         return userRepository.save(user);
+//     }
+
+//     public User updateUser(Long id, User updatedUser) {
+//         return userRepository.findById(id)
+//                 .map(user -> {
+//                     user.setName(updatedUser.getName());
+//                     user.setEmail(updatedUser.getEmail());
+//                     // Only allow role update if current user is MANAGER
+//                     if (user.getRole().equals(User.ROLE_MANAGER)) {
+//                         user.setRole(updatedUser.getRole());
+//                     }
+//                     return userRepository.save(user);
+//                 })
+//                 .orElseThrow(() -> new RuntimeException("User not found"));
+//     }
+
+//     public void deleteUser(Long id) {
+//         userRepository.deleteById(id);
+//     }
+
+//     public User findByEmail(String email) {
+//         return userRepository.findByEmail(email);
+//     }
+// }

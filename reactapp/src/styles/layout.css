@@ -1,3 +1,21 @@
+/* Make sure root and app stretch full height */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* fill screen height */
+}
+
+.main-content {
+  flex: 1; /* take up all remaining space, pushes footer down */
+}
+
+
+/* ------------------- NAVBAR ------------------- */
 .navbar {
   background: rgba(249, 243, 239, 0.9); /* lightest color with transparency */
   backdrop-filter: blur(10px);
@@ -32,6 +50,12 @@
   color: #1b3c53; /* darkest blue */
 }
 
+/* Hide hamburger by default (desktop view) */
+.navbar .menu-toggle {
+  display: none;
+}
+
+/* ------------------- FOOTER ------------------- */
 .footer {
   background: #1b3c53; /* darkest blue */
   color: #f9f3ef; /* lightest color */
@@ -39,7 +63,6 @@
   text-align: center;
   font-size: 0.85rem;
   border-top: 1px solid rgba(210, 193, 182, 0.3); /* beige border */
-  margin-top: auto; /* Key for sticking to bottom */
 }
 
 .footer a {
@@ -51,4 +74,64 @@
 
 .footer a:hover {
   color: #f9f3ef; /* lightest color */
+}
+
+/* ------------------- MOBILE NAV ------------------- */
+@media (max-width: 768px) {
+  .navbar {
+    position: relative;
+    z-index: 1100; /* keep navbar above everything */
+  }
+
+  .navbar ul {
+    display: none;
+  }
+
+  .navbar ul.active {
+    display: flex;
+    flex-direction: column;
+    position: fixed; /* full screen overlay */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(249, 243, 239, 0.98);
+    padding: 2rem;
+    gap: 1.5rem;
+    z-index: 1200; /* above hero/content */
+    animation: fadeInMenu 0.3s ease-in-out;
+  }
+
+  .navbar ul.active li {
+    text-align: center;
+  }
+
+  .navbar ul.active a {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #1b3c53;
+  }
+
+  .navbar .menu-toggle {
+    display: block;
+    font-size: 1.8rem;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: #1b3c53;
+    z-index: 1300; /* even above overlay */
+    position: relative;
+  }
+}
+
+/* ------------------- ANIMATIONS ------------------- */
+@keyframes fadeInMenu {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

@@ -1,5 +1,5 @@
 /* ===========================
-   GLOBAL
+   GLOBAL STYLES
 =========================== */
 * {
   margin: 0;
@@ -9,8 +9,8 @@
 
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: #f9f3ef; /* light beige background */
-  color: #1b3c53; /* darkest blue */
+  background: #f9f3ef;
+  color: #1b3c53;
   line-height: 1.6;
 }
 
@@ -42,10 +42,9 @@ body {
   padding: 80px 8%;
   background: linear-gradient(135deg, rgba(210, 193, 182, 0.2), rgba(249, 243, 239, 0.8));
   border-radius: 16px;
-  margin: 40px auto;
-  max-width: 1400px;
+  margin: 40px auto 100px;  /* ✅ extra bottom margin for spacing */
+  max-width: 1200px;
   gap: 40px;
-  min-height: 80vh;
 }
 
 .hero-content {
@@ -57,9 +56,14 @@ body {
   font-size: 3.2rem;
   font-weight: 800;
   margin-bottom: 20px;
-  color: #1b3c53;
   line-height: 1.2;
   animation: fadeInUp 1s ease-in-out forwards;
+
+  /* ✅ Proper gradient text */
+  background: linear-gradient(90deg, #FF6B6B, #FF9F9F, #FFD93D);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent; /* <-- this fixes the box issue */
 }
 
 .hero-content p {
@@ -107,7 +111,7 @@ body {
    FEATURES SECTION
 =========================== */
 .features-section {
-  padding: 100px 8%;
+  padding: 120px 8% 80px;
   background: #f9f3ef;
   text-align: center;
 }
@@ -118,9 +122,12 @@ body {
 
 .section-header h2 {
   font-size: 2.5rem;
-  color: #1b3c53;
   margin-bottom: 20px;
   letter-spacing: -0.5px;
+  background: linear-gradient(90deg, #FF6B6B, #FF9F9F, #FFD93D);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent; /* ✅ gradient applied properly */
 }
 
 .section-subtitle {
@@ -205,7 +212,7 @@ body {
    SECONDARY FEATURES SECTION
 =========================== */
 .secondary-features {
-  padding: 80px 8%;
+  padding: 60px 8%;
   background: linear-gradient(to bottom, #f9f3ef, #e8dfd8);
 }
 
@@ -296,8 +303,11 @@ body {
 
 .contact-section h2 {
   font-size: 2rem;
-  color: #1b3c53;
   margin-bottom: 20px;
+  background: linear-gradient(90deg, #FF6B6B, #FF9F9F, #FFD93D);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent; /* ✅ fix */
 }
 
 .contact-form {
@@ -353,18 +363,7 @@ body {
 =========================== */
 @media (max-width: 1024px) {
   .hero {
-    flex-direction: column;
-    text-align: center;
     padding: 60px 5%;
-  }
-  
-  .hero-content {
-    max-width: 100%;
-    margin-bottom: 40px;
-  }
-  
-  .hero-content p {
-    max-width: 100%;
   }
   
   .features-grid {
@@ -373,7 +372,22 @@ body {
 }
 
 @media (max-width: 768px) {
-  .features-section, 
+  .hero {
+    flex-direction: column;
+    text-align: center;
+    padding: 40px 20px;
+    gap: 20px;
+  }
+  
+  .hero-content h1 {
+    font-size: 2.2rem;
+  }
+  
+  .hero-content p {
+    font-size: 1rem;
+  }
+  
+  .features-section,
   .secondary-features {
     padding: 60px 5%;
   }
@@ -396,22 +410,26 @@ body {
     text-align: center;
   }
   
-  .block-icon {
-    margin: 0 auto;
+  .contact-section {
+    margin: 40px 20px;
+    padding: 30px;
   }
 }
 
 @media (max-width: 480px) {
   .hero-content h1 {
-    font-size: 2.5rem;
+    font-size: 1.8rem;
   }
   
   .section-header h2 {
     font-size: 1.8rem;
   }
   
+  .feature-card {
+    padding: 25px 15px;
+  }
+  
   .contact-section {
-    padding: 30px 20px;
-    margin: 60px 20px;
+    padding: 20px 15px;
   }
 }

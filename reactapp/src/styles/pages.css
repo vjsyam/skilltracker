@@ -1,16 +1,16 @@
 .homepage {
   padding: 20px;
   text-align: center;
-  background: #f9f3ef; /* lightest color */
-  color: #1b3c53; /* darkest blue */
+  background: #f9f3ef;
+  color: #1b3c53;
 }
 
 .hero {
   padding: 40px;
   margin: 20px auto;
   max-width: 800px;
-  background: #f9f3ef; /* lightest color */
-  color: #1b3c53; /* darkest blue */
+  background: #f9f3ef;
+  color: #1b3c53;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(27, 60, 83, 0.1);
 }
@@ -37,8 +37,8 @@
   max-width: 94%;
   padding: 18px;
   border-radius: 12px;
-  background: #f9f3ef; /* lightest color */
-  color: #1b3c53; /* darkest blue */
+  background: #f9f3ef;
+  color: #1b3c53;
   box-shadow: 0 8px 20px rgba(27, 60, 83, 0.2);
 }
 
@@ -136,8 +136,8 @@
 }
 
 .btn.primary {
-  background: linear-gradient(90deg, #1b3c53, #456882); /* darkest to medium blue */
-  color: #f9f3ef; /* lightest color */
+  background: linear-gradient(90deg, #1b3c53, #456882);
+  color: #f9f3ef;
   border: none;
 }
 
@@ -161,7 +161,7 @@
   overflow-x: auto;
   padding: 10px;
   border-radius: 8px;
-  background: #f9f3ef; /* lightest color */
+  background: #f9f3ef;
 }
 
 .page-header {
@@ -174,13 +174,13 @@
 
 .employees-page {
   padding: 24px;
-  background: #f9f3ef; /* lightest color */
+  background: #f9f3ef;
 }
 
 .glass-table {
   width: 100%;
   border-collapse: collapse;
-  background: rgba(249, 243, 239, 0.9); /* lightest color */
+  background: rgba(249, 243, 239, 0.9);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(27, 60, 83, 0.1);
@@ -194,8 +194,8 @@
 }
 
 .glass-table th {
-  background: #456882; /* medium blue */
-  color: #f9f3ef; /* lightest color */
+  background: #456882;
+  color: #f9f3ef;
   font-weight: 600;
 }
 
@@ -222,3 +222,4 @@
     flex-direction: column;
   }
 }
+

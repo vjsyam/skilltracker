@@ -82,6 +82,48 @@
   border-bottom: 1px solid #d2c1b6; /* beige */
 }
 
+/* Center titles and add subtle accent underline */
+.modal-header h2 {
+  margin: 0;
+  color: #1b3c53;
+  font-weight: 600;
+}
+
+/* Gradient text utility for headings without affecting icons */
+.heading-gradient {
+  background: linear-gradient(90deg, #FF6B6B, #FF9F9F, #FFD93D);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.heading-gradient svg {
+  color: #FF6B6B; /* Matches the start of the gradient */
+}
+
+/* Revert to classic compact modal proportions, while keeping theme colors */
+.form-modal .modal-header {
+  background: rgba(249, 243, 239, 0.95);
+  color: #1b3c53;
+  padding: 0;
+  margin: 0 0 16px;
+  border-bottom: 1px solid #d2c1b6;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.full-screen-form { /* keep minimal change to size */
+  width: 720px;
+  max-width: 94%;
+  min-height: auto;
+}
+
+.modal-body.two-col { /* revert to single column like before */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .close-btn {
   background: transparent;
   border: none;
@@ -249,6 +291,14 @@
   border-bottom: 1px solid #d2c1b6; /* beige */
 }
 
+/* Match homepage accent gradient for page titles */
+.page-header h1 {
+  background: linear-gradient(90deg, #FF6B6B, #FF9F9F, #FFD93D);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 .page {
   padding: 24px;
   background: #f9f3ef; /* lightest color */
@@ -264,7 +314,7 @@
 }
 
 .glass-btn {
-  background: rgba(69, 104, 130, 0.4); /* medium blue */
+  background: linear-gradient(135deg, #1b3c53, #456882);
   border: none;
   padding: 8px 16px;
   margin: 4px;
@@ -276,18 +326,18 @@
 }
 
 .glass-btn:hover {
-  background: rgba(69, 104, 130, 0.6);
+  background: linear-gradient(135deg, #456882, #1b3c53);
   transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(27, 60, 83, 0.1);
+  box-shadow: 0 2px 6px rgba(27, 60, 83, 0.2);
 }
 
 .glass-btn.delete {
-  background: rgba(255, 0, 0, 0.3);
+  background: linear-gradient(90deg, #ff6b6b, #ff4b4b);
   color: #f9f3ef; /* lightest color */
 }
 
 .glass-btn.delete:hover {
-  background: rgba(255, 0, 0, 0.5);
+  background: linear-gradient(90deg, #ff4b4b, #ff3b3b);
 }
 
 .chart-container {
@@ -639,8 +689,8 @@ body {
 
 /* Header */
 .messages-table th {
-  background: linear-gradient(135deg, #009fff, #ec2f4b);
-  color: white;
+  background: linear-gradient(135deg, #1b3c53, #456882);
+  color: #f9f3ef;
   padding: 12px;
   font-weight: 600;
   text-align: left;
@@ -668,8 +718,8 @@ body {
 
 /* Extra UI matching homepage styles */
 .btn-modern {
-  background: linear-gradient(135deg, #00c6ff, #0072ff);
-  color: white;
+  background: linear-gradient(135deg, #1b3c53, #456882);
+  color: #f9f3ef;
   padding: 10px 18px;
   border-radius: 8px;
   border: none;

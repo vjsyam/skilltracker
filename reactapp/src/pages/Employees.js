@@ -28,7 +28,7 @@ export default function Employees() {
   return (
     <div className="page glass">
       <div className="page-header">
-        <h1>Employee Management</h1>
+        <h1 className="heading-gradient">Employee Management</h1>
         <button 
           className="glass-btn" 
           onClick={() => setEditingEmployee({})}

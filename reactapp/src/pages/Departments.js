@@ -45,7 +45,7 @@ export default function Departments() {
   return (
     <div className="page glass">
       <div className="page-header">
-        <h1>Departments</h1>
+        <h1 className="heading-gradient">Departments</h1>
         <button
           className="glass-btn"
           onClick={() => {

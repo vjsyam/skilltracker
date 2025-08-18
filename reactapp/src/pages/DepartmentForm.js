@@ -35,10 +35,10 @@ export default function DepartmentForm({ existingData, onClose, onSave }) {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal glass">
+    <div className="modal-overlay fixed-overlay">
+      <div className="modal glass centered-modal form-modal">
         <div className="modal-header">
-          <h2>
+          <h2 className="heading-gradient">
             <FaBuilding /> {existingData ? "Edit Department" : "Add Department"}
           </h2>
           <button className="close-btn" onClick={onClose}>
@@ -76,7 +76,7 @@ export default function DepartmentForm({ existingData, onClose, onSave }) {
             <button type="button" className="btn" onClick={onClose}>
               <FaTimes /> Cancel
             </button>
-            <button type="submit" className="btn primary">
+            <button type="submit" className="glass-btn primary">
               <FaSave /> {existingData ? "Update" : "Save"}
             </button>
           </div>

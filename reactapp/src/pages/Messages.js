@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "../styles/pages.css";
 import "../styles/components.css";
 import { FaEnvelope, FaClock } from "react-icons/fa";
 

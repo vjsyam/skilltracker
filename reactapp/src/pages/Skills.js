@@ -31,7 +31,7 @@ export default function Skills() {
   return (
     <div className="page glass">
       <div className="page-header">
-        <h1>Skill Tracking</h1>
+        <h1 className="heading-gradient">Skill Tracking</h1>
         <button 
           className="glass-btn" 
           onClick={() => { setEditData(null); setShowForm(true); }}

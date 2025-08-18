@@ -64,9 +64,9 @@ export default function EmployeeForm({ onSuccess, editingEmployee, setEditingEmp
 
   return (
     <div className="modal-overlay fixed-overlay">
-      <div className="modal glass centered-modal">
+      <div className="modal glass centered-modal employee-form-modal form-modal">
         <div className="modal-header">
-          <h2>
+          <h2 className="heading-gradient">
             <FaUser /> {editingEmployee ? "Edit Employee" : "Add Employee"}
           </h2>
           <button 
@@ -150,7 +150,7 @@ export default function EmployeeForm({ onSuccess, editingEmployee, setEditingEmp
           <div className="form-actions">
             <button 
               type="button" 
-              className="glass-btn secondary"
+              className="btn"
               onClick={() => setEditingEmployee(null)}
             >
               <FaTimes /> Cancel
