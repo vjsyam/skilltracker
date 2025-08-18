@@ -13,8 +13,8 @@ import {
 } from "chart.js";
 import "../styles/pages.css";
 import "../styles/components.css";
+import { FaChartBar, FaChartPie } from "react-icons/fa";
 
-// Register Chart.js modules
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -43,7 +43,6 @@ export default function Reports() {
       });
   }, []);
 
-  // Chart configuration options
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -81,33 +80,28 @@ export default function Reports() {
     return <div className="page glass"><h2>No report data available</h2></div>;
   }
 
-  // Convert maps to arrays for chart compatibility
   const employeesPerDept = reportData.employeesPerDepartment || {};
   const skillsCount = reportData.skillsCount || {};
 
-  // Create department data for bar chart
   const departmentNames = Object.keys(employeesPerDept);
   const departmentEmployeeCounts = Object.values(employeesPerDept);
 
-  // Create skill data for pie chart
   const skillNames = Object.keys(skillsCount);
   const skillCounts = Object.values(skillsCount);
 
-  // Bar Chart for employees per department
   const departmentSkillData = departmentNames.length > 0 ? {
     labels: departmentNames,
     datasets: [
       {
         label: "Employees per Department",
         data: departmentEmployeeCounts,
-        backgroundColor: "rgba(27, 60, 83, 0.7)", // Dark blue from your palette
+        backgroundColor: "rgba(27, 60, 83, 0.7)",
         borderColor: "rgba(27, 60, 83, 1)",
         borderWidth: 1
       }
     ]
   } : null;
 
-  // Pie Chart for skill distribution
   const skillDistributionData = skillNames.length > 0 ? {
     labels: skillNames,
     datasets: [
@@ -115,11 +109,11 @@ export default function Reports() {
         label: "Skill Count",
         data: skillCounts,
         backgroundColor: [
-          "rgba(27, 60, 83, 0.7)",   // Dark blue
-          "rgba(69, 104, 130, 0.7)",  // Medium blue
-          "rgba(210, 193, 182, 0.7)", // Beige
-          "rgba(249, 243, 239, 0.7)", // Off-white
-          "rgba(150, 170, 190, 0.7)"  // Additional shade
+          "rgba(27, 60, 83, 0.7)",
+          "rgba(69, 104, 130, 0.7)",
+          "rgba(210, 193, 182, 0.7)",
+          "rgba(249, 243, 239, 0.7)",
+          "rgba(150, 170, 190, 0.7)"
         ],
         borderColor: [
           "rgba(27, 60, 83, 1)",
@@ -135,13 +129,17 @@ export default function Reports() {
 
   return (
     <div className="page glass">
-      <h1>Reports & Analytics</h1>
+      <div className="page-header">
+        <h1>Reports & Analytics</h1>
+      </div>
 
-      <div className="charts-container">
+      <div className="charts-grid">
         {departmentNames.length > 0 && departmentSkillData && (
-          <div className="chart-wrapper glass">
-            <h2>Employees per Department</h2>
-            <div className="chart-container" style={{ height: '300px' }}>
+          <div className="chart-card">
+            <div className="chart-title">
+              <h2><FaChartBar /> Employees per Department</h2>
+            </div>
+            <div className="chart-container">
               <Bar 
                 data={departmentSkillData} 
                 options={chartOptions}
@@ -151,9 +149,11 @@ export default function Reports() {
         )}
 
         {skillNames.length > 0 && skillDistributionData && (
-          <div className="chart-wrapper glass">
-            <h2>Skill Distribution</h2>
-            <div className="chart-container" style={{ height: '300px' }}>
+          <div className="chart-card">
+            <div className="chart-title">
+              <h2><FaChartPie /> Skill Distribution</h2>
+            </div>
+            <div className="chart-container">
               <Pie 
                 data={skillDistributionData} 
                 options={pieOptions}
@@ -163,8 +163,8 @@ export default function Reports() {
         )}
 
         {departmentNames.length === 0 && skillNames.length === 0 && (
-          <div className="no-data-message">
-            <h2>No data available for reports</h2>
+          <div className="alert info">
+            No data available for reports
           </div>
         )}
       </div>

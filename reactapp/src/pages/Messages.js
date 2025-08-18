@@ -1,5 +1,6 @@
-// src/pages/Messages.js
 import React, { useEffect, useState } from "react";
+import "../styles/components.css";
+import { FaEnvelope, FaClock } from "react-icons/fa";
 
 export default function Messages() {
   const [messages, setMessages] = useState([]);
@@ -18,34 +19,45 @@ export default function Messages() {
       });
   }, []);
 
-  if (loading) return <p style={{ textAlign: "center" }}>Loading messages...</p>;
+  if (loading) return (
+    <div className="page glass">
+      <p className="text-center">Loading messages...</p>
+    </div>
+  );
 
   return (
-    <div className="messages-page">
-      <h1>📩 Admin Messages</h1>
+    <div className="page glass">
+      <div className="page-header">
+        <h1><FaEnvelope /> Admin Messages</h1>
+      </div>
+      
       {messages.length === 0 ? (
-        <p>No messages found.</p>
+        <div className="alert info">
+          No messages found in the system.
+        </div>
       ) : (
-        <table className="messages-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Message</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {messages.map((msg) => (
-              <tr key={msg.id}>
-                <td>{msg.name}</td>
-                <td>{msg.email}</td>
-                <td>{msg.content}</td>
-                <td>{new Date(msg.createdAt).toLocaleString()}</td>
+        <div className="table-wrap">
+          <table className="glass-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Message</th>
+                <th><FaClock /> Date</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {messages.map((msg) => (
+                <tr key={msg.id}>
+                  <td>{msg.name}</td>
+                  <td>{msg.email}</td>
+                  <td>{msg.content}</td>
+                  <td>{new Date(msg.createdAt).toLocaleString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

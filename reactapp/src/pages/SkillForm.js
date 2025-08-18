@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from "react";
 import "../styles/components.css";
 import { createSkill, updateSkill } from "../services/skillService";
+import { FaSave, FaTimes, FaTag, FaInfoCircle } from "react-icons/fa";
 
 export default function SkillForm({ existingData, onClose, onSave }) {
   const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
 
   useEffect(() => {
-    if (existingData) setName(existingData.name || "");
+    if (existingData) {
+      setName(existingData.name || "");
+      setDescription(existingData.description || "");
+    }
   }, [existingData]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const payload = { name };
+    const payload = { name, description };
 
     if (existingData) {
       updateSkill(existingData.id, payload)
@@ -25,15 +30,53 @@ export default function SkillForm({ existingData, onClose, onSave }) {
   };
 
   return (
-    <div className="modal glass">
-      <h2>{existingData ? "Edit Skill" : "Add Skill"}</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="Skill Name" value={name} onChange={(e) => setName(e.target.value)} required />
-        <div className="form-actions">
-          <button className="glass-btn" type="submit">Save</button>
-          <button className="glass-btn" type="button" onClick={onClose}>Cancel</button>
+    <div className="modal-overlay">
+      <div className="modal glass">
+        <div className="modal-header">
+          <h2>
+            <FaTag /> {existingData ? "Edit Skill" : "Add Skill"}
+          </h2>
+          <button className="close-btn" onClick={onClose}>
+            <FaTimes />
+          </button>
         </div>
-      </form>
+
+        <form onSubmit={handleSubmit} className="modal-body">
+          <div className="form-group">
+            <label>
+              <FaTag /> Skill Name
+            </label>
+            <input
+              type="text"
+              placeholder="Enter skill name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>
+              <FaInfoCircle /> Description
+            </label>
+            <textarea
+              placeholder="Enter skill description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={3}
+            />
+          </div>
+
+          <div className="modal-actions">
+            <button type="button" className="btn" onClick={onClose}>
+              <FaTimes /> Cancel
+            </button>
+            <button type="submit" className="btn primary">
+              <FaSave /> {existingData ? "Update" : "Save"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

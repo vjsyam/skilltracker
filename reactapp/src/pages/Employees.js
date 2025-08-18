@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "../styles/pages.css";
+import "../styles/components.css";
 import { getEmployees, deleteEmployee } from "../services/employeeService";
 import EmployeeForm from "../pages/EmployeeForm";
+import { FaUserEdit, FaTrash, FaPlus } from "react-icons/fa";
 
 export default function Employees() {
   const [employees, setEmployees] = useState([]);
@@ -25,43 +27,69 @@ export default function Employees() {
 
   return (
     <div className="page glass">
-      <h1>Employees</h1>
-      <EmployeeForm
-        onSuccess={loadEmployees}
-        editingEmployee={editingEmployee}
-        setEditingEmployee={setEditingEmployee}
-      />
-      <table className="glass-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>User</th>
-            <th>Department</th>
-            <th>Skills</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {employees.length > 0 ? (
-            employees.map((emp) => (
-              <tr key={emp.id}>
-                <td>{emp.id}</td>
-                <td>{emp.userName}</td>
-                <td>{emp.departmentName}</td>
-                <td>{emp.skillNames?.join(", ")}</td>
-                <td>
-                  <button onClick={() => setEditingEmployee(emp)}>Edit</button>
-                  <button onClick={() => handleDelete(emp.id)}>Delete</button>
-                </td>
-              </tr>
-            ))
-          ) : (
+      <div className="page-header">
+        <h1>Employee Management</h1>
+        <button 
+          className="glass-btn" 
+          onClick={() => setEditingEmployee({})}
+        >
+          <FaPlus /> Add Employee
+        </button>
+      </div>
+      
+      <div className="table-wrap">
+        <table className="glass-table">
+          <thead>
             <tr>
-              <td colSpan="5">No employees found</td>
+              <th>ID</th>
+              <th>User</th>
+              <th>Department</th>
+              <th>Manager</th>
+              <th>Skills</th>
+              <th>Actions</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {employees.length > 0 ? (
+              employees.map((emp) => (
+                <tr key={emp.id}>
+                  <td>{emp.id}</td>
+                  <td>{emp.userName}</td>
+                  <td>{emp.departmentName}</td>
+                  <td>{emp.managerName || 'None'}</td>
+                  <td>{emp.skillNames?.join(", ") || 'None'}</td>
+                  <td>
+                    <button 
+                      className="glass-btn" 
+                      onClick={() => setEditingEmployee(emp)}
+                    >
+                      <FaUserEdit /> Edit
+                    </button>
+                    <button 
+                      className="glass-btn delete" 
+                      onClick={() => handleDelete(emp.id)}
+                    >
+                      <FaTrash /> Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6" className="text-center">No employees found</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {editingEmployee && (
+        <EmployeeForm
+          onSuccess={loadEmployees}
+          editingEmployee={editingEmployee}
+          setEditingEmployee={setEditingEmployee}
+        />
+      )}
     </div>
   );
 }

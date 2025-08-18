@@ -1,10 +1,17 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/homepage.css";
-import { FaUsers, FaBookOpen, FaChartLine } from "react-icons/fa";
+import { 
+  FaUserFriends,
+  FaUserGraduate, 
+  FaChartBar,
+  FaUserTie,
+  FaClipboardCheck,
+  FaChartPie
+} from "react-icons/fa";
 
 export default function Homepage() {
-  // State for contact form
+  // ===== CONTACT FORM STATE =====
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -12,12 +19,10 @@ export default function Homepage() {
   });
   const [status, setStatus] = useState("");
 
-  // Handle input change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Submit contact form to backend
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -37,18 +42,59 @@ export default function Homepage() {
     }
   };
 
+  // ===== FEATURE DATA =====
+  const primaryFeatures = [
+    {
+      icon: <FaUserGraduate />,
+      title: "Skill Development",
+      description: "Track and enhance professional skills with personalized learning paths."
+    },
+    {
+      icon: <FaChartBar />,
+      title: "Performance Analytics",
+      description: "Get detailed insights with comprehensive analytics tools."
+    },
+    {
+      icon: <FaUserFriends />,
+      title: "Team Collaboration",
+      description: "Enhance team productivity through better coordination and visibility."
+    }
+  ];
+
+  const secondaryFeatures = [
+    {
+      icon: <FaUserTie />,
+      title: "Employee Management",
+      description: "Add, edit, and view employee records with ease.",
+      link: "/employees"
+    },
+    {
+      icon: <FaClipboardCheck />,
+      title: "Skill Tracking",
+      description: "Maintain a skill database for talent visibility.",
+      link: "/skills"
+    },
+    {
+      icon: <FaChartPie />,
+      title: "Reports & Insights",
+      description: "Generate reports to understand capabilities.",
+      link: "/reports"
+    }
+  ];
+
   return (
     <div className="homepage">
-      {/* HERO SECTION */}
+      {/* ===== HERO SECTION ===== */}
       <header className="hero glass">
         <div className="hero-content">
-          <h1>Welcome to Skill Tracker</h1>
+          <h1>Powerful Features for Modern Businesses</h1>
           <p>
-            Track skills, manage employees, and improve your team's productivity with a modern, intuitive dashboard.
+            Discover how our comprehensive skill tracking platform helps organizations 
+            build stronger, more capable teams.
           </p>
-          <Link to="/employees">
+          {/* <Link to="/employees">
             <button className="cta-btn">Get Started →</button>
-          </Link>
+          </Link> */}
         </div>
         <div className="hero-image">
           <img
@@ -58,29 +104,52 @@ export default function Homepage() {
         </div>
       </header>
 
-      {/* FEATURES */}
-      <section className="features">
-        <Link to="/employees" className="card glass">
-          <span className="icon"><FaUsers /></span>
-          <h2>Employee Management</h2>
-          <p>Add, edit, and view employee records with ease.</p>
-        </Link>
-        
-        <Link to="/skills" className="card glass">
-          <span className="icon"><FaBookOpen /></span>
-          <h2>Skill Tracking</h2>
-          <p>Maintain a skill database for better talent visibility.</p>
-        </Link>
-        
-        <Link to="/reports" className="card glass">
-          <span className="icon"><FaChartLine /></span>
-          <h2>Reports & Insights</h2>
-          <p>Generate reports to understand employee capabilities.</p>
-        </Link>
+      {/* ===== PRIMARY FEATURES ===== */}
+      <section className="primary-features">
+        <div className="section-header">
+          <h2>Our Core Capabilities</h2>
+          <p className="section-subtitle">
+            Designed to help you maximize your team's potential
+          </p>
+        </div>
+
+        <div className="features-grid">
+          {primaryFeatures.map((feature, index) => (
+            <div key={index} className="feature-card">
+              <div className="feature-icon">{feature.icon}</div>
+              <h3>{feature.title}</h3>
+              <p>{feature.description}</p>
+            </div>
+          ))}
+        </div>
       </section>
 
+      {/* ===== SECONDARY FEATURES ===== */}
+      <section className="secondary-features">
+        <div className="section-header">
+          <h2>Explore More Features</h2>
+          <p className="section-subtitle">
+            Additional tools to help you manage your workforce effectively
+          </p>
+        </div>
 
-      {/* CONTACT FORM */}
+        <div className="features-grid-minimal">
+          {secondaryFeatures.map((feature, index) => (
+            <div key={index} className="feature-block">
+              <div className="block-icon">{feature.icon}</div>
+              <div className="block-content">
+                <h3>{feature.title}</h3>
+                <p>{feature.description}</p>
+                <Link to={feature.link} className="block-link">
+                  Explore <span>→</span>
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ===== CONTACT FORM ===== */}
       <section className="contact-section glass">
         <h2>Connect with Admin</h2>
         <form className="contact-form" onSubmit={handleSubmit}>

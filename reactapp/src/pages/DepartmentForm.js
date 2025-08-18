@@ -1,17 +1,27 @@
 import React, { useState, useEffect } from "react";
 import "../styles/components.css";
 import { createDepartment, updateDepartment } from "../services/departmentService";
+import { FaSave, FaTimes, FaBuilding, FaUser } from "react-icons/fa";
 
 export default function DepartmentForm({ existingData, onClose, onSave }) {
   const [name, setName] = useState("");
+  const [employeeIds, setEmployeeIds] = useState("");
 
   useEffect(() => {
-    if (existingData) setName(existingData.name || "");
+    if (existingData) {
+      setName(existingData.name || "");
+      if (existingData.employees) {
+        setEmployeeIds(existingData.employees.map(emp => emp.id).join(","));
+      }
+    }
   }, [existingData]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const payload = { name };
+    const payload = { 
+      name,
+      employeeIds: employeeIds.split(",").map(id => id.trim()).filter(id => id)
+    };
 
     if (existingData) {
       updateDepartment(existingData.id, payload)
@@ -25,15 +35,53 @@ export default function DepartmentForm({ existingData, onClose, onSave }) {
   };
 
   return (
-    <div className="modal glass">
-      <h2>{existingData ? "Edit Department" : "Add Department"}</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="Department Name" value={name} onChange={(e) => setName(e.target.value)} required />
-        <div className="form-actions">
-          <button className="glass-btn" type="submit">Save</button>
-          <button className="glass-btn" type="button" onClick={onClose}>Cancel</button>
+    <div className="modal-overlay">
+      <div className="modal glass">
+        <div className="modal-header">
+          <h2>
+            <FaBuilding /> {existingData ? "Edit Department" : "Add Department"}
+          </h2>
+          <button className="close-btn" onClick={onClose}>
+            <FaTimes />
+          </button>
         </div>
-      </form>
+
+        <form onSubmit={handleSubmit} className="modal-body">
+          <div className="form-group">
+            <label>
+              <FaBuilding /> Department Name
+            </label>
+            <input
+              type="text"
+              placeholder="Enter department name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>
+              <FaUser /> Employee IDs (comma separated)
+            </label>
+            <input
+              type="text"
+              placeholder="Enter employee IDs (e.g., 1, 2, 3)"
+              value={employeeIds}
+              onChange={(e) => setEmployeeIds(e.target.value)}
+            />
+          </div>
+
+          <div className="modal-actions">
+            <button type="button" className="btn" onClick={onClose}>
+              <FaTimes /> Cancel
+            </button>
+            <button type="submit" className="btn primary">
+              <FaSave /> {existingData ? "Update" : "Save"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

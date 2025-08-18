@@ -3,6 +3,7 @@ import "../styles/pages.css";
 import "../styles/components.css";
 import { getSkills, deleteSkill } from "../services/skillService";
 import SkillForm from "./SkillForm";
+import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 
 export default function Skills() {
   const [skills, setSkills] = useState([]);
@@ -29,36 +30,55 @@ export default function Skills() {
 
   return (
     <div className="page glass">
-      <h1>Skills</h1>
-      <button className="glass-btn" onClick={() => { setEditData(null); setShowForm(true); }}>
-        ➕ Add Skill
-      </button>
+      <div className="page-header">
+        <h1>Skill Tracking</h1>
+        <button 
+          className="glass-btn" 
+          onClick={() => { setEditData(null); setShowForm(true); }}
+        >
+          <FaPlus /> Add Skill
+        </button>
+      </div>
 
-      <table className="glass-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Skill Name</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {skills.length > 0 ? (
-            skills.map((skill) => (
-              <tr key={skill.id}>
-                <td>{skill.id}</td>
-                <td>{skill.name}</td>
-                <td>
-                  <button className="glass-btn" onClick={() => { setEditData(skill); setShowForm(true); }}>✏ Edit</button>
-                  <button className="glass-btn delete" onClick={() => handleDelete(skill.id)}>🗑 Delete</button>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr><td colSpan="3">No skills found</td></tr>
-          )}
-        </tbody>
-      </table>
+      <div className="table-wrap">
+        <table className="glass-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Skill Name</th>
+              <th>Description</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {skills.length > 0 ? (
+              skills.map((skill) => (
+                <tr key={skill.id}>
+                  <td>{skill.id}</td>
+                  <td>{skill.name}</td>
+                  <td className="description-cell">{skill.description || 'No description'}</td>
+                  <td>
+                    <button 
+                      className="glass-btn" 
+                      onClick={() => { setEditData(skill); setShowForm(true); }}
+                    >
+                      <FaEdit /> Edit
+                    </button>
+                    <button 
+                      className="glass-btn delete" 
+                      onClick={() => handleDelete(skill.id)}
+                    >
+                      <FaTrash /> Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr><td colSpan="4" className="text-center">No skills found</td></tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {showForm && (
         <SkillForm

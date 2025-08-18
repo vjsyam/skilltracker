@@ -12,7 +12,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/departments")
 @CrossOrigin(origins = "http://localhost:3000")
-
 public class DepartmentController {
 
     @Autowired
@@ -31,11 +30,10 @@ public class DepartmentController {
     }
 
     @PostMapping
-public ResponseEntity<Department> createDepartment(@RequestBody Department department) {
-    Department saved = departmentService.createDepartment(department);
-    return new ResponseEntity<>(saved, HttpStatus.CREATED);
-}
-
+    public ResponseEntity<Department> createDepartment(@RequestBody Department department) {
+        Department saved = departmentService.createDepartment(department);
+        return new ResponseEntity<>(saved, HttpStatus.CREATED);
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<Department> updateDepartment(@PathVariable Long id, @RequestBody Department department) {
@@ -48,7 +46,11 @@ public ResponseEntity<Department> createDepartment(@RequestBody Department depar
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDepartment(@PathVariable Long id) {
-        departmentService.deleteDepartment(id);
-        return ResponseEntity.noContent().build();
+        try {
+            departmentService.deleteDepartment(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
