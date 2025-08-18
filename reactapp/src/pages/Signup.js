@@ -1,4 +1,3 @@
-// src/pages/Signup.js
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/auth.css";
@@ -9,7 +8,7 @@ export default function Signup() {
     name: "", 
     email: "", 
     password: "",
-    role: "employee" // Default role
+    role: "employee" 
   });
 
   const handleChange = (e) => {
@@ -18,14 +17,12 @@ export default function Signup() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // ✅ Fake signup success
     navigate("/home");
   };
 
   return (
     <div className="auth-page">
       <div className="auth-wrapper">
-        {/* FORM */}
         <div className="auth-container glass">
           <div className="auth-header">
             <h2>Sign Up</h2>
@@ -91,7 +88,6 @@ export default function Signup() {
           </div>
         </div>
 
-        {/* SIDE PANEL */}
         <div className="auth-side">
           <h2>Join SkillSync Today</h2>
           <p>Start optimizing your workforce management in minutes.</p>

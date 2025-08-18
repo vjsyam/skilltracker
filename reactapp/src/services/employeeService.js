@@ -1,4 +1,4 @@
-import api from "./api"; // axios instance
+import api from "./api";
 
 export const getEmployees = () => api.get("/employees");
 

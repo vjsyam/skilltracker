@@ -1,4 +1,3 @@
-// src/pages/Landing.js
 import React from "react";
 import { Link } from "react-router-dom";
 import "../styles/landing.css";
@@ -16,7 +15,6 @@ import {
 export default function Landing() {
   return (
     <div className="landing-page">
-      {/* Hero Section */}
       <section className="landing-hero glass">
         <div className="hero-content">
           <h1>Empower Your Workforce with SkillSync</h1>
@@ -41,7 +39,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="landing-features">
         <h2>Why Choose SkillSync?</h2>
         <div className="features-grid">
@@ -89,7 +86,6 @@ export default function Landing() {
             </p>
           </div>
 
-          {/* ✅ New Feature 1 */}
           <div className="feature-card glass">
             <div className="feature-icon">
               <FaChartPie />
@@ -101,7 +97,6 @@ export default function Landing() {
             </p>
           </div>
 
-          {/* ✅ New Feature 2 */}
           <div className="feature-card glass">
             <div className="feature-icon">
               <FaSortAmountUpAlt />
@@ -115,7 +110,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="landing-cta glass">
         <div className="cta-content">
           <h2>Ready to Transform Your Workforce Management?</h2>

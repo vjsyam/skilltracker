@@ -1,4 +1,3 @@
-// src/pages/Login.js
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/auth.css";
@@ -13,14 +12,12 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // ✅ Fake login success
     navigate("/home");
   };
 
   return (
     <div className="auth-page">
       <div className="auth-wrapper">
-        {/* FORM */}
         <div className="auth-container glass">
           <div className="auth-header">
             <h2>Login</h2>
@@ -62,7 +59,6 @@ export default function Login() {
           </div>
         </div>
 
-        {/* SIDE PANEL */}
         <div className="auth-side">
           <h2>Welcome Back!</h2>
           <p>Sign in to access your SkillSync dashboard.</p>

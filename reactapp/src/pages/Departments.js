@@ -34,7 +34,7 @@ export default function Departments() {
     if (window.confirm("Are you sure you want to delete this department?")) {
       try {
         await deleteDepartment(id);
-        fetchDepartments(); // Refresh the list after deletion
+        fetchDepartments(); 
       } catch (err) {
         console.error("Failed to delete department:", err);
         setError("Failed to delete department");

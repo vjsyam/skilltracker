@@ -11,7 +11,6 @@ import {
 } from "react-icons/fa";
 
 export default function Homepage() {
-  // ===== CONTACT FORM STATE =====
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -84,7 +83,6 @@ export default function Homepage() {
 
   return (
     <div className="homepage">
-      {/* ===== HERO SECTION ===== */}
       <header className="hero glass">
         <div className="hero-content">
           <h1>Powerful Features for Modern Businesses</h1>
@@ -104,7 +102,6 @@ export default function Homepage() {
         </div>
       </header>
 
-      {/* ===== PRIMARY FEATURES ===== */}
       <section className="primary-features">
         <div className="section-header">
           <h2>Our Core Capabilities</h2>
@@ -124,7 +121,6 @@ export default function Homepage() {
         </div>
       </section>
 
-      {/* ===== SECONDARY FEATURES ===== */}
       <section className="secondary-features">
         <div className="section-header">
           <h2>Explore More Features</h2>
