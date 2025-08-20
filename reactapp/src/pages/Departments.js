@@ -3,7 +3,9 @@ import "../styles/pages.css";
 import "../styles/components.css";
 import { getDepartments, deleteDepartment } from "../services/departmentService";
 import DepartmentForm from "./DepartmentForm";
-import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { AdminOnly, ViewOnly } from "../components/RoleBasedAccess";
+import { authService } from "../services/authService";
+import { FaEdit, FaTrash, FaPlus, FaEye } from "react-icons/fa";
 
 export default function Departments() {
   const [departments, setDepartments] = useState([]);
@@ -46,15 +48,17 @@ export default function Departments() {
     <div className="page glass">
       <div className="page-header">
         <h1 className="heading-gradient">Departments</h1>
-        <button
-          className="glass-btn"
-          onClick={() => {
-            setEditData(null);
-            setShowForm(true);
-          }}
-        >
-          <FaPlus /> Add Department
-        </button>
+        <AdminOnly>
+          <button
+            className="glass-btn"
+            onClick={() => {
+              setEditData(null);
+              setShowForm(true);
+            }}
+          >
+            <FaPlus /> Add Department
+          </button>
+        </AdminOnly>
       </div>
 
       {error && <div className="error-message">{error}</div>}
@@ -67,7 +71,7 @@ export default function Departments() {
               <th>ID</th>
               <th>Department Name</th>
               <th>Employees</th>
-              <th>Actions</th>
+                             <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -83,23 +87,36 @@ export default function Departments() {
                         }`
                       : <em>No employees</em>}
                   </td>
-                  <td>
-                    <button
-                      className="glass-btn"
-                      onClick={() => {
-                        setEditData(dept);
-                        setShowForm(true);
-                      }}
-                    >
-                      <FaEdit /> Edit
-                    </button>
-                    <button
-                      className="glass-btn delete"
-                      onClick={() => handleDelete(dept.id)}
-                    >
-                      <FaTrash /> Delete
-                    </button>
-                  </td>
+                                     <td>
+                     <ViewOnly>
+                       <button
+                         className="glass-btn view"
+                         onClick={() => {
+                           setEditData(dept);
+                           setShowForm(true);
+                         }}
+                       >
+                         <FaEye /> View
+                       </button>
+                     </ViewOnly>
+                     <AdminOnly>
+                       <button
+                         className="glass-btn"
+                         onClick={() => {
+                           setEditData(dept);
+                           setShowForm(true);
+                         }}
+                       >
+                         <FaEdit /> Edit
+                       </button>
+                       <button
+                         className="glass-btn delete"
+                         onClick={() => handleDelete(dept.id)}
+                       >
+                         <FaTrash /> Delete
+                       </button>
+                     </AdminOnly>
+                   </td>
                 </tr>
               ))
             ) : (
@@ -113,13 +130,14 @@ export default function Departments() {
         </table>
       </div>
 
-      {showForm && (
-        <DepartmentForm
-          existingData={editData}
-          onClose={() => setShowForm(false)}
-          onSave={fetchDepartments}
-        />
-      )}
+             {showForm && (
+         <DepartmentForm
+           existingData={editData}
+           onClose={() => setShowForm(false)}
+           onSave={fetchDepartments}
+           isViewOnly={!authService.isAdmin()}
+         />
+       )}
     </div>
   );
 }

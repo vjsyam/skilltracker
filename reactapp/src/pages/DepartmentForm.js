@@ -3,7 +3,7 @@ import "../styles/components.css";
 import { createDepartment, updateDepartment } from "../services/departmentService";
 import { FaSave, FaTimes, FaBuilding, FaUser } from "react-icons/fa";
 
-export default function DepartmentForm({ existingData, onClose, onSave }) {
+export default function DepartmentForm({ existingData, onClose, onSave, isViewOnly = false }) {
   const [name, setName] = useState("");
   const [employeeIds, setEmployeeIds] = useState("");
 
@@ -39,7 +39,7 @@ export default function DepartmentForm({ existingData, onClose, onSave }) {
       <div className="modal glass centered-modal form-modal">
         <div className="modal-header">
           <h2 className="heading-gradient">
-            <FaBuilding /> {existingData ? "Edit Department" : "Add Department"}
+            <FaBuilding /> {isViewOnly ? "View Department" : existingData ? "Edit Department" : "Add Department"}
           </h2>
           <button className="close-btn" onClick={onClose}>
             <FaTimes />
@@ -57,6 +57,7 @@ export default function DepartmentForm({ existingData, onClose, onSave }) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
+              disabled={isViewOnly}
             />
           </div>
 
@@ -69,16 +70,19 @@ export default function DepartmentForm({ existingData, onClose, onSave }) {
               placeholder="Enter employee IDs (e.g., 1, 2, 3)"
               value={employeeIds}
               onChange={(e) => setEmployeeIds(e.target.value)}
+              disabled={isViewOnly}
             />
           </div>
 
           <div className="modal-actions">
             <button type="button" className="btn" onClick={onClose}>
-              <FaTimes /> Cancel
+              <FaTimes /> {isViewOnly ? "Close" : "Cancel"}
             </button>
-            <button type="submit" className="glass-btn primary">
-              <FaSave /> {existingData ? "Update" : "Save"}
-            </button>
+            {!isViewOnly && (
+              <button type="submit" className="glass-btn primary">
+                <FaSave /> {existingData ? "Update" : "Save"}
+              </button>
+            )}
           </div>
         </form>
       </div>

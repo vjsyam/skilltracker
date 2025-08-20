@@ -3,7 +3,9 @@ import "../styles/pages.css";
 import "../styles/components.css";
 import { getSkills, deleteSkill } from "../services/skillService";
 import SkillForm from "./SkillForm";
-import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { AdminOnly, ViewOnly } from "../components/RoleBasedAccess";
+import { authService } from "../services/authService";
+import { FaEdit, FaTrash, FaPlus, FaEye } from "react-icons/fa";
 
 export default function Skills() {
   const [skills, setSkills] = useState([]);
@@ -32,12 +34,14 @@ export default function Skills() {
     <div className="page glass">
       <div className="page-header">
         <h1 className="heading-gradient">Skill Tracking</h1>
-        <button 
-          className="glass-btn" 
-          onClick={() => { setEditData(null); setShowForm(true); }}
-        >
-          <FaPlus /> Add Skill
-        </button>
+        <AdminOnly>
+          <button 
+            className="glass-btn" 
+            onClick={() => { setEditData(null); setShowForm(true); }}
+          >
+            <FaPlus /> Add Skill
+          </button>
+        </AdminOnly>
       </div>
 
       <div className="table-wrap">
@@ -47,7 +51,7 @@ export default function Skills() {
               <th>ID</th>
               <th>Skill Name</th>
               <th>Description</th>
-              <th>Actions</th>
+                             <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -57,20 +61,30 @@ export default function Skills() {
                   <td>{skill.id}</td>
                   <td>{skill.name}</td>
                   <td className="description-cell">{skill.description || 'No description'}</td>
-                  <td>
-                    <button 
-                      className="glass-btn" 
-                      onClick={() => { setEditData(skill); setShowForm(true); }}
-                    >
-                      <FaEdit /> Edit
-                    </button>
-                    <button 
-                      className="glass-btn delete" 
-                      onClick={() => handleDelete(skill.id)}
-                    >
-                      <FaTrash /> Delete
-                    </button>
-                  </td>
+                                     <td>
+                     <ViewOnly>
+                       <button 
+                         className="glass-btn view" 
+                         onClick={() => { setEditData(skill); setShowForm(true); }}
+                       >
+                         <FaEye /> View
+                       </button>
+                     </ViewOnly>
+                     <AdminOnly>
+                       <button 
+                         className="glass-btn" 
+                         onClick={() => { setEditData(skill); setShowForm(true); }}
+                       >
+                         <FaEdit /> Edit
+                       </button>
+                       <button 
+                         className="glass-btn delete" 
+                         onClick={() => handleDelete(skill.id)}
+                       >
+                         <FaTrash /> Delete
+                       </button>
+                     </AdminOnly>
+                   </td>
                 </tr>
               ))
             ) : (
@@ -80,13 +94,14 @@ export default function Skills() {
         </table>
       </div>
 
-      {showForm && (
-        <SkillForm
-          existingData={editData}
-          onClose={() => setShowForm(false)}
-          onSave={fetchSkills}
-        />
-      )}
+             {showForm && (
+         <SkillForm
+           existingData={editData}
+           onClose={() => setShowForm(false)}
+           onSave={fetchSkills}
+           isViewOnly={!authService.isAdmin()}
+         />
+       )}
     </div>
   );
 }

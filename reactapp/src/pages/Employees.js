@@ -3,7 +3,9 @@ import "../styles/pages.css";
 import "../styles/components.css";
 import { getEmployees, deleteEmployee } from "../services/employeeService";
 import EmployeeForm from "../pages/EmployeeForm";
-import { FaUserEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { AdminOnly, ViewOnly } from "../components/RoleBasedAccess";
+import { authService } from "../services/authService";
+import { FaUserEdit, FaTrash, FaPlus, FaEye } from "react-icons/fa";
 
 export default function Employees() {
   const [employees, setEmployees] = useState([]);
@@ -29,12 +31,14 @@ export default function Employees() {
     <div className="page glass">
       <div className="page-header">
         <h1 className="heading-gradient">Employee Management</h1>
-        <button 
-          className="glass-btn" 
-          onClick={() => setEditingEmployee({})}
-        >
-          <FaPlus /> Add Employee
-        </button>
+        <AdminOnly>
+          <button 
+            className="glass-btn" 
+            onClick={() => setEditingEmployee({})}
+          >
+            <FaPlus /> Add Employee
+          </button>
+        </AdminOnly>
       </div>
       
       <div className="table-wrap">
@@ -46,7 +50,7 @@ export default function Employees() {
               <th>Department</th>
               <th>Manager</th>
               <th>Skills</th>
-              <th>Actions</th>
+                             <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -58,20 +62,30 @@ export default function Employees() {
                   <td>{emp.departmentName}</td>
                   <td>{emp.managerName || 'None'}</td>
                   <td>{emp.skillNames?.join(", ") || 'None'}</td>
-                  <td>
-                    <button 
-                      className="glass-btn" 
-                      onClick={() => setEditingEmployee(emp)}
-                    >
-                      <FaUserEdit /> Edit
-                    </button>
-                    <button 
-                      className="glass-btn delete" 
-                      onClick={() => handleDelete(emp.id)}
-                    >
-                      <FaTrash /> Delete
-                    </button>
-                  </td>
+                                     <td>
+                     <ViewOnly>
+                       <button 
+                         className="glass-btn view" 
+                         onClick={() => setEditingEmployee(emp)}
+                       >
+                         <FaEye /> View
+                       </button>
+                     </ViewOnly>
+                     <AdminOnly>
+                       <button 
+                         className="glass-btn" 
+                         onClick={() => setEditingEmployee(emp)}
+                       >
+                         <FaUserEdit /> Edit
+                       </button>
+                       <button 
+                         className="glass-btn delete" 
+                         onClick={() => handleDelete(emp.id)}
+                       >
+                         <FaTrash /> Delete
+                       </button>
+                     </AdminOnly>
+                   </td>
                 </tr>
               ))
             ) : (
@@ -88,6 +102,7 @@ export default function Employees() {
           onSuccess={loadEmployees}
           editingEmployee={editingEmployee}
           setEditingEmployee={setEditingEmployee}
+          isViewOnly={!authService.isAdmin()}
         />
       )}
     </div>

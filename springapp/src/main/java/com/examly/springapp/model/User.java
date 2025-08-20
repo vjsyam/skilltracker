@@ -12,7 +12,11 @@ public class User {
     private String name;
     private String email;
     private String password;
-    private String role; // e.g., ADMIN or EMPLOYEE
+    private String role; // MANAGER or EMPLOYEE
+
+    // Role constants
+    public static final String ROLE_ADMIN = "ADMIN";
+    public static final String ROLE_EMPLOYEE = "EMPLOYEE";
 
     public User() {}
 

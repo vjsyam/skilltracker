@@ -1,10 +1,24 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { authService } from "../services/authService";
+import { AdminOnly } from "./RoleBasedAccess";
 import "../styles/layout.css";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaBars, FaTimes, FaUser, FaSignOutAlt } from "react-icons/fa";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const currentUser = authService.getCurrentUser();
+    setUser(currentUser);
+  }, []);
+
+  const handleLogout = () => {
+    authService.logout();
+    navigate("/");
+  };
 
   return (
     <nav className="navbar glass">
@@ -35,9 +49,28 @@ export default function Navbar() {
         <li>
           <Link to="/reports" onClick={() => setMenuOpen(false)}>Reports</Link>
         </li>
-        <li>
-          <Link to="/messages" onClick={() => setMenuOpen(false)}>Messages</Link>
-        </li>
+        <AdminOnly>
+          <li>
+            <Link to="/messages" onClick={() => setMenuOpen(false)}>Messages</Link>
+          </li>
+        </AdminOnly>
+        <AdminOnly>
+          <li>
+            <Link to="/admin" onClick={() => setMenuOpen(false)}>Admin Panel</Link>
+          </li>
+        </AdminOnly>
+        {user && (
+          <>
+            <li className="user-info">
+              <FaUser /> {user.name} ({user.role})
+            </li>
+            <li>
+              <button onClick={handleLogout} className="logout-btn">
+                <FaSignOutAlt /> Logout
+              </button>
+            </li>
+          </>
+        )}
       </ul>
     </nav>
   );

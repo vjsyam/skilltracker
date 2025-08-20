@@ -3,7 +3,7 @@ import "../styles/components.css";
 import { createSkill, updateSkill } from "../services/skillService";
 import { FaSave, FaTimes, FaTag, FaInfoCircle } from "react-icons/fa";
 
-export default function SkillForm({ existingData, onClose, onSave }) {
+export default function SkillForm({ existingData, onClose, onSave, isViewOnly = false }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
 
@@ -34,7 +34,7 @@ export default function SkillForm({ existingData, onClose, onSave }) {
       <div className="modal glass centered-modal form-modal">
         <div className="modal-header">
           <h2 className="heading-gradient">
-            <FaTag /> {existingData ? "Edit Skill" : "Add Skill"}
+            <FaTag /> {isViewOnly ? "View Skill" : existingData ? "Edit Skill" : "Add Skill"}
           </h2>
           <button className="close-btn" onClick={onClose}>
             <FaTimes />
@@ -52,6 +52,7 @@ export default function SkillForm({ existingData, onClose, onSave }) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
+              disabled={isViewOnly}
             />
           </div>
 
@@ -64,16 +65,19 @@ export default function SkillForm({ existingData, onClose, onSave }) {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
+              disabled={isViewOnly}
             />
           </div>
 
           <div className="modal-actions">
             <button type="button" className="btn" onClick={onClose}>
-              <FaTimes /> Cancel
+              <FaTimes /> {isViewOnly ? "Close" : "Cancel"}
             </button>
-            <button type="submit" className="glass-btn primary">
-              <FaSave /> {existingData ? "Update" : "Save"}
-            </button>
+            {!isViewOnly && (
+              <button type="submit" className="glass-btn primary">
+                <FaSave /> {existingData ? "Update" : "Save"}
+              </button>
+            )}
           </div>
         </form>
       </div>

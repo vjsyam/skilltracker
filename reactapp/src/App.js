@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // Pages
 import Landing from "./pages/Landing";
@@ -41,12 +42,12 @@ function App() {
           <Route path="/signup" element={<Signup />} />
 
           {/* Protected Pages */}
-          <Route path="/home" element={<Home />} />
-          <Route path="/employees" element={<Employees />} />
-          <Route path="/departments" element={<Departments />} />
-          <Route path="/skills" element={<Skills />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/messages" element={<Messages />} />
+          <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+          <Route path="/employees" element={<ProtectedRoute><Employees /></ProtectedRoute>} />
+          <Route path="/departments" element={<ProtectedRoute><Departments /></ProtectedRoute>} />
+          <Route path="/skills" element={<ProtectedRoute><Skills /></ProtectedRoute>} />
+          <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+          <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
         </Routes>
       </Layout>
     </Router>

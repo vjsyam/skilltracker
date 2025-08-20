@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { authService } from "../services/authService";
 import "../styles/auth.css";
 
 export default function Signup() {
@@ -15,9 +16,27 @@ export default function Signup() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate("/home");
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const data = await authService.signup(formData.name, formData.email, formData.password, formData.role);
+      
+      // Store user data in localStorage
+      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("isLoggedIn", "true");
+      
+      navigate("/home");
+    } catch (err) {
+      setError(err.message || "Signup failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -28,6 +47,8 @@ export default function Signup() {
             <h2>Sign Up</h2>
             <p>Create your account to get started.</p>
           </div>
+
+          {error && <div className="auth-error">{error}</div>}
 
           <form className="auth-form" onSubmit={handleSubmit}>
             <div className="form-group">
@@ -73,11 +94,11 @@ export default function Signup() {
                 required
               >
                 <option value="employee">Employee</option>
-                <option value="manager">Manager (Admin)</option>
+                <option value="admin">Admin</option>
               </select>
             </div>
-            <button type="submit" className="auth-btn primary">
-              Sign Up
+            <button type="submit" className="auth-btn primary" disabled={isLoading}>
+              {isLoading ? "Loading..." : "Sign Up"}
             </button>
           </form>
 

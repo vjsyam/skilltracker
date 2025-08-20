@@ -99,6 +99,17 @@
   font-size: 0.9rem;
 }
 
+.auth-error {
+  background: #fee;
+  color: #c33;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #fcc;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
 .auth-footer a {
   color: #1b3c53;
   font-weight: 500;
@@ -266,4 +277,66 @@
   outline: none;
   border-color: #456882;
   box-shadow: 0 0 0 3px rgba(69, 104, 130, 0.2);
+}
+
+/* Password input container with toggle button */
+.password-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-container input {
+  flex: 1;
+  padding-right: 3rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: #456882;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.password-toggle-btn:hover {
+  color: #1b3c53;
+}
+
+.password-toggle-btn:focus {
+  outline: none;
+  color: #1b3c53;
+}
+
+/* Access Denied Styling */
+.access-denied {
+  text-align: center;
+  padding: 1rem;
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 8px;
+  margin: 1rem 0;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.access-denied h3 {
+  color: #c33;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.access-denied p {
+  color: #666;
+  margin: 0;
+  font-size: 0.9rem;
 }

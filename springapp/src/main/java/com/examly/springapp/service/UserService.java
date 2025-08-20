@@ -3,7 +3,6 @@ package com.examly.springapp.service;
 import com.examly.springapp.model.User;
 import com.examly.springapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,8 +14,6 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -26,8 +23,7 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        // user.setPassword(user.getPassword());
+        // Store password as plain text (no encoding needed)
         return userRepository.save(user);
     }
 
@@ -44,6 +40,30 @@ public class UserService {
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    public User findByEmail(String email) {
+        // Use the safer method that handles duplicates
+        Optional<User> userOpt = userRepository.findFirstByEmailOrderByIdAsc(email);
+        return userOpt.orElse(null);
+    }
+
+    public User authenticateUser(String email, String password) {
+        User user = findByEmail(email);
+        
+
+        
+        if (user != null && password.equals(user.getPassword())) {
+            // Normalize role to match expected format
+            if ("Manager".equals(user.getRole()) || "MANAGER".equals(user.getRole()) || "Admin".equals(user.getRole()) || "ADMIN".equals(user.getRole())) {
+                user.setRole("ADMIN");
+            } else if ("Engineer".equals(user.getRole()) || "Employee".equals(user.getRole()) || "EMPLOYEE".equals(user.getRole())) {
+                user.setRole("EMPLOYEE");
+            }
+
+            return user;
+        }
+        return null;
     }
 }
 

@@ -1,18 +1,41 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { authService } from "../services/authService";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "../styles/auth.css";
 
 export default function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate("/home");
+    setIsLoading(true);
+    setError("");
+
+
+
+    try {
+      const data = await authService.login(formData.email, formData.password);
+      
+      // Store user data in localStorage
+      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("isLoggedIn", "true");
+      
+      navigate("/home");
+    } catch (err) {
+      setError(err.message || "Login failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -23,6 +46,8 @@ export default function Login() {
             <h2>Login</h2>
             <p>Welcome back! Please login to continue.</p>
           </div>
+
+          {error && <div className="auth-error">{error}</div>}
 
           <form className="auth-form" onSubmit={handleSubmit}>
             <div className="form-group">
@@ -38,17 +63,28 @@ export default function Login() {
             </div>
             <div className="form-group">
               <label>Password</label>
-              <input
-                type="password"
-                name="password"
-                placeholder="Enter your password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
+              <div className="password-input-container">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
+
             </div>
-            <button type="submit" className="auth-btn primary">
-              Login
+            <button type="submit" className="auth-btn primary" disabled={isLoading}>
+              {isLoading ? "Loading..." : "Login"}
             </button>
           </form>
 

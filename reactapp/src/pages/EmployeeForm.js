@@ -3,7 +3,7 @@ import "../styles/components.css";
 import { createEmployee, updateEmployee } from "../services/employeeService";
 import { FaUser, FaBuilding, FaTools, FaUserTie, FaSave, FaTimes } from "react-icons/fa";
 
-export default function EmployeeForm({ onSuccess, editingEmployee, setEditingEmployee }) {
+export default function EmployeeForm({ onSuccess, editingEmployee, setEditingEmployee, isViewOnly = false }) {
   const [formData, setFormData] = useState({
     user: { id: "" },
     manager: { id: "" },
@@ -67,7 +67,7 @@ export default function EmployeeForm({ onSuccess, editingEmployee, setEditingEmp
       <div className="modal glass centered-modal employee-form-modal form-modal">
         <div className="modal-header">
           <h2 className="heading-gradient">
-            <FaUser /> {editingEmployee ? "Edit Employee" : "Add Employee"}
+            <FaUser /> {isViewOnly ? "View Employee" : editingEmployee ? "Edit Employee" : "Add Employee"}
           </h2>
           <button 
             className="close-btn" 
@@ -93,6 +93,7 @@ export default function EmployeeForm({ onSuccess, editingEmployee, setEditingEmp
               required
               min="1"
               className="form-input"
+              disabled={isViewOnly}
             />
           </div>
 
@@ -109,6 +110,7 @@ export default function EmployeeForm({ onSuccess, editingEmployee, setEditingEmp
               onChange={handleChange}
               min="0"
               className="form-input"
+              disabled={isViewOnly}
             />
           </div>
 
@@ -126,6 +128,7 @@ export default function EmployeeForm({ onSuccess, editingEmployee, setEditingEmp
               required
               min="1"
               className="form-input"
+              disabled={isViewOnly}
             />
           </div>
 
@@ -141,6 +144,7 @@ export default function EmployeeForm({ onSuccess, editingEmployee, setEditingEmp
               value={formData.skills.map(s => s.id).join(", ")}
               onChange={handleSkillsChange}
               className="form-input"
+              disabled={isViewOnly}
             />
             <small className="skill-hint">
               Enter comma-separated skill IDs
@@ -153,11 +157,13 @@ export default function EmployeeForm({ onSuccess, editingEmployee, setEditingEmp
               className="btn"
               onClick={() => setEditingEmployee(null)}
             >
-              <FaTimes /> Cancel
+              <FaTimes /> {isViewOnly ? "Close" : "Cancel"}
             </button>
-            <button type="submit" className="glass-btn primary">
-              <FaSave /> {editingEmployee ? "Update" : "Save"}
-            </button>
+            {!isViewOnly && (
+              <button type="submit" className="glass-btn primary">
+                <FaSave /> {editingEmployee ? "Update" : "Save"}
+              </button>
+            )}
           </div>
         </form>
       </div>

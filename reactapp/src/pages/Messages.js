@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../styles/pages.css";
 import "../styles/components.css";
+import { AdminOnly } from "../components/RoleBasedAccess";
 import { FaEnvelope, FaClock } from "react-icons/fa";
 
 export default function Messages() {
@@ -27,39 +28,41 @@ export default function Messages() {
   );
 
   return (
-    <div className="page glass">
-      <div className="page-header">
-        <h1><FaEnvelope /> Admin Messages</h1>
-      </div>
-      
-      {messages.length === 0 ? (
-        <div className="alert info">
-          No messages found in the system.
+    <AdminOnly>
+      <div className="page glass">
+        <div className="page-header">
+          <h1><FaEnvelope /> Admin Messages</h1>
         </div>
-      ) : (
-        <div className="table-wrap">
-          <table className="glass-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Message</th>
-                <th><FaClock /> Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {messages.map((msg) => (
-                <tr key={msg.id}>
-                  <td>{msg.name}</td>
-                  <td>{msg.email}</td>
-                  <td>{msg.content}</td>
-                  <td>{new Date(msg.createdAt).toLocaleString()}</td>
+        
+        {messages.length === 0 ? (
+          <div className="alert info">
+            No messages found in the system.
+          </div>
+        ) : (
+          <div className="table-wrap">
+            <table className="glass-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Message</th>
+                  <th><FaClock /> Date</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
+              </thead>
+              <tbody>
+                {messages.map((msg) => (
+                  <tr key={msg.id}>
+                    <td>{msg.name}</td>
+                    <td>{msg.email}</td>
+                    <td>{msg.content}</td>
+                    <td>{new Date(msg.createdAt).toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </AdminOnly>
   );
 }

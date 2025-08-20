@@ -44,6 +44,32 @@ html, body, #root {
   color: #456882; /* medium blue */
 }
 
+.user-info {
+  color: #1b3c53;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logout-btn {
+  background: #d45a5a;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.logout-btn:hover {
+  background: #c44a4a;
+}
+
 .navbar .logo {
   font-weight: 700;
   font-size: 1.3rem;
