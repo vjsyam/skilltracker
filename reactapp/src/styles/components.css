@@ -150,7 +150,7 @@
   display: flex;
   flex-direction: column;
   font-size: 0.95rem;
-  color: #1b3c53; /* darkest blue */
+  color: #FF6B6B; /* darkest blue */
   gap: 6px;
 }
 
@@ -467,7 +467,7 @@ body {
 .footer {
   text-align: center;
   padding: 1rem;
-  background: #1b3c53; /* darkest blue */
+  background: linear-gradient(90deg, #FF6B6B, #FF9F9F, #FFD93D);
   color: #f9f3ef; /* lightest color */
   font-size: 0.9rem;
   position: sticky;
@@ -547,7 +547,7 @@ body {
 .footer {
   text-align: center;
   padding: 1rem;
-  background: #1b3c53;
+  background: linear-gradient(90deg, #D45A5A, #D87F7F, #D9B633);
   color: #f9f3ef;
   font-size: 0.85rem;
   border-top: 1px solid rgba(210, 193, 182, 0.3);

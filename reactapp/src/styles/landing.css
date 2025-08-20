@@ -33,7 +33,7 @@
 
 .hero-subtitle {
   font-size: 1.2rem;
-  color: #456882;
+  color: #FF9F9F;
   margin-bottom: 2rem;
   line-height: 1.6;
 }
@@ -55,15 +55,15 @@
 }
 
 .btn.primary {
-  background: linear-gradient(135deg, #1b3c53, #456882);
+  background: linear-gradient(135deg, #FF6B6B, #FF9F9F, #FFD93D);
   color: #f9f3ef;
   border: none;
 }
 
 .btn.secondary {
   background: transparent;
-  color: #1b3c53;
-  border: 1px solid #1b3c53;
+  color: #FF6B6B;
+  border: 1px solid #FF6B6B;
 }
 
 .btn.large {
@@ -73,7 +73,7 @@
 
 .btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 15px rgba(27, 60, 83, 0.2);
+  box-shadow: 0 8px 15px rgba(255, 107, 107, 0.2);
 }
 
 .hero-image {
@@ -104,7 +104,10 @@
 .landing-features h2 {
   font-size: 2.2rem;
   margin-bottom: 2rem;
-  color: #1b3c53;
+  background: linear-gradient(90deg, #FF6B6B, #FF9F9F, #FFD93D);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .features-grid {
@@ -128,7 +131,7 @@
 .feature-icon {
   font-size: 2.5rem;
   color: #f9f3ef;
-  background: linear-gradient(135deg, #1b3c53, #456882);
+  background: linear-gradient(135deg, #FF6B6B, #FF9F9F, #FFD93D);
   width: 70px;
   height: 70px;
   border-radius: 50%;
@@ -140,12 +143,12 @@
 
 .feature-card h3 {
   font-size: 1.5rem;
-  color: #1b3c53;
+  color: #FF6B6B;
   margin-bottom: 1rem;
 }
 
 .feature-card p {
-  color: #456882;
+  color: #FF9F9F;
   line-height: 1.6;
 }
 
@@ -154,21 +157,35 @@
   margin: 4rem 0;
   border-radius: 16px;
   text-align: center;
-  background: linear-gradient(135deg, rgba(27, 60, 83, 0.9), rgba(69, 104, 130, 0.9));
-  color: #f9f3ef;
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.9), rgba(255, 159, 159, 0.9), rgba(255, 217, 61, 0.9));
+  color: #FF6B6B;
 }
 
 .landing-cta h2 {
   font-size: 2.2rem;
   margin-bottom: 1.5rem;
+  background: linear-gradient(90deg, #FF6B6B, #FF9F9F, #FFD93D);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .landing-cta p {
   max-width: 700px;
   margin: 0 auto 2rem;
+  color: #1b3c53;
   font-size: 1.1rem;
   line-height: 1.6;
 }
+
+.landing-cta .btn.primary {
+  background: linear-gradient(90deg, #D45A5A, #D87F7F, #D9B633);
+  color: #fff;
+  border: none;
+  justify-content: center; 
+  text-align: center;
+}
+
 
 @media (max-width: 1024px) {
   .landing-hero {
@@ -198,5 +215,37 @@
   
   .landing-cta {
     padding: 2rem;
+  }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+  .landing-page {
+    padding: 1rem;
+  }
+
+  .landing-hero {
+    padding: 2rem 1.25rem;
+    margin: 1.25rem 0;
+  }
+
+  .hero-content h1 {
+    font-size: 1.8rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .feature-card {
+    padding: 1.25rem;
+  }
+
+  .landing-cta {
+    padding: 1.5rem 1.25rem;
   }
 }

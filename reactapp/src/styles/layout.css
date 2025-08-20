@@ -57,7 +57,7 @@ html, body, #root {
 
 /* ------------------- FOOTER ------------------- */
 .footer {
-  background: #1b3c53; /* darkest blue */
+  background: linear-gradient(90deg, #D45A5A, #D87F7F, #D9B633);
   color: #f9f3ef; /* lightest color */
   padding: 12px 20px;
   text-align: center;

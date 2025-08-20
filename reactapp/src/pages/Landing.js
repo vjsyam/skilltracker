@@ -40,7 +40,7 @@ export default function Landing() {
       </section>
 
       <section className="landing-features">
-        <h2>Why Choose SkillSync?</h2>
+        <h2 >Why Choose SkillSync?</h2>
         <div className="features-grid">
           <div className="feature-card glass">
             <div className="feature-icon">

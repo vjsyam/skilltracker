@@ -219,6 +219,38 @@
   }
 }
 
+/* Extra small devices */
+@media (max-width: 480px) {
+  .auth-page {
+    padding: 1rem;
+  }
+
+  .auth-container {
+    padding: 1.25rem;
+  }
+
+  .auth-page .auth-header h2 {
+    font-size: 1.6rem;
+  }
+
+  .auth-header p {
+    font-size: 0.95rem;
+  }
+
+  .form-group label {
+    font-size: 0.9rem;
+  }
+
+  .auth-btn {
+    font-size: 0.95rem;
+  }
+
+  .social-btn {
+    font-size: 0.85rem;
+    padding: 0.6rem;
+  }
+}
+
 .role-select {
   padding: 0.75rem 1rem;
   border: 1px solid #d2c1b6;
