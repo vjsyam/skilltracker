@@ -22,10 +22,10 @@ export default function Login() {
     setError("");
 
     try {
-      const data = await authService.login(formData.email, formData.password);
+      await authService.login(formData.email, formData.password);
       
       // authService.login already sets localStorage values, no need to set them again
-      console.log('Login successful, redirecting to home');
+      // Login successful
       
       navigate("/home");
     } catch (err) {

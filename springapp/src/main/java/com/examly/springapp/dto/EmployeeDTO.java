@@ -9,6 +9,7 @@ public class EmployeeDTO {
     private Long id;
     private Long userId;
     private String userName;
+    private String userEmail;
     private Long managerId;
     private String managerName;
     private Long departmentId;
@@ -38,6 +39,14 @@ public class EmployeeDTO {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
     public Long getManagerId() {
@@ -90,7 +99,7 @@ public class EmployeeDTO {
 
     public EmployeeDTO(Employee e) {
         this.id = e.getId();
-        if (e.getUser() != null) { this.userId = e.getUser().getId(); this.userName = e.getUser().getName(); }
+        if (e.getUser() != null) { this.userId = e.getUser().getId(); this.userName = e.getUser().getName(); this.userEmail = e.getUser().getEmail(); }
         if (e.getManager() != null) { this.managerId = e.getManager().getId(); this.managerName = e.getManager().getName(); }
         if (e.getDepartment() != null) { this.departmentId = e.getDepartment().getId(); this.departmentName = e.getDepartment().getName(); }
         this.skillIds = e.getSkills() != null ? e.getSkills().stream().map(Skill::getId).collect(Collectors.toSet()) : null;

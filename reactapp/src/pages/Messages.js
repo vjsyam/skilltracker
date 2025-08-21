@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles/pages.css";
 import "../styles/components.css";
-import { AdminOnly } from "../components/RoleBasedAccess";
 import { getMessages } from "../services/messageService";
 import { FaEnvelope, FaClock, FaChevronLeft, FaChevronRight, FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
 

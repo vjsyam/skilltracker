@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import "../styles/pages.css";
 import "../styles/components.css";
 import { getEmployees, deleteEmployee } from "../services/employeeService";
+// Removed search/filter imports
 import EmployeeForm from "../pages/EmployeeForm";
 import { AdminOnly, ViewOnly } from "../components/RoleBasedAccess";
 import { authService } from "../services/authService";
@@ -24,8 +25,9 @@ export default function Employees() {
     sortBy: "id",
     sortDir: "asc"
   });
+  // Search/filter removed
 
-  const loadEmployees = async (page = 0, size = 10, sortBy = "id", sortDir = "asc") => {
+  const loadEmployees = useCallback(async (page = 0, size = 10, sortBy = "id", sortDir = "asc") => {
     setLoading(true);
     try {
       const response = await getEmployees(page, size, sortBy, sortDir);
@@ -64,10 +66,31 @@ export default function Employees() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    loadEmployees();
+    // initial fetch
+    setLoading(true);
+    getEmployees(0, pagination.size, sorting.sortBy, sorting.sortDir)
+      .then((response) => {
+        const employeeData = response?.content || response?.data || (Array.isArray(response) ? response : []) || [];
+        setEmployees(employeeData);
+        setPagination({
+          page: response?.page || 0,
+          size: response?.size || 10,
+          totalElements: response?.totalElements ?? employeeData.length,
+          totalPages: response?.totalPages || 1,
+          hasNext: response?.hasNext || false,
+          hasPrevious: response?.hasPrevious || false,
+        });
+        setError(null);
+      })
+      .catch((err) => {
+        console.error("Error fetching employees (initial):", err);
+        setEmployees([]);
+        setError("Failed to load employees");
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const handleDelete = async (id) => {
@@ -87,6 +110,10 @@ export default function Employees() {
     setSorting({ sortBy: column, sortDir: newSortDir });
     loadEmployees(0, pagination.size, column, newSortDir);
   };
+
+  // Filters removed
+
+  // CSV actions removed
 
   const handlePageChange = (newPage) => {
     loadEmployees(newPage, pagination.size, sorting.sortBy, sorting.sortDir);
@@ -114,20 +141,22 @@ export default function Employees() {
       {error && <div className="error-message">{error}</div>}
       {loading && <div className="loading-indicator">Loading...</div>}
       
+      {/* Filters removed per request */}
+
       <div className="table-wrap">
-        <table className="glass-table">
+        <table className="glass-table" style={{ tableLayout: 'auto' }}>
           <thead>
             <tr>
-              <th onClick={() => handleSort("id")} className="sortable-header">
+              <th onClick={() => handleSort("id")} className="sortable-header" title="Sort by ID">
                 ID {getSortIcon("id")}
               </th>
-              <th onClick={() => handleSort("userName")} className="sortable-header">
+              <th onClick={() => handleSort("userName")} className="sortable-header" title="Sort by User">
                 User {getSortIcon("userName")}
               </th>
-              <th onClick={() => handleSort("departmentName")} className="sortable-header">
+              <th onClick={() => handleSort("departmentName")} className="sortable-header" title="Sort by Department">
                 Department {getSortIcon("departmentName")}
               </th>
-              <th onClick={() => handleSort("managerName")} className="sortable-header">
+              <th onClick={() => handleSort("managerName")} className="sortable-header" title="Sort by Manager">
                 Manager {getSortIcon("managerName")}
               </th>
               <th>Skills</th>

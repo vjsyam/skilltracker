@@ -13,7 +13,6 @@ const getAuthHeaders = () => {
     headers.Authorization = `Bearer ${token}`;
   }
   
-  console.log('Auth headers:', headers);
   return headers;
 };
 
@@ -25,7 +24,7 @@ export const apiCall = async (endpoint, options = {}) => {
     ...options,
   };
 
-  console.log(`API Call: ${url}`, config);
+  // console.debug(`API Call: ${url}`, config);
 
   try {
     const response = await fetch(url, config);
@@ -45,7 +44,7 @@ export const apiCall = async (endpoint, options = {}) => {
     console.log(`API Response: ${url}`, data);
     return data;
   } catch (error) {
-    console.error(`API Error for ${url}:`, error);
+    console.error(`API Error for ${url}:`, error.message || error);
     throw error;
   }
 };

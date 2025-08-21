@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+// import java.util.List;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -23,14 +23,19 @@ public class EmployeeController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir) {
-        
-        Sort sort = sortDir.equalsIgnoreCase("desc") ? 
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) Long departmentId,
+            @RequestParam(required = false) Long skillId) {
+
+        Sort sort = sortDir.equalsIgnoreCase("desc") ?
             Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
-        
+
         Pageable pageable = PageRequest.of(page, size, sort);
-        return employeeService.getAllEmployeesPaginated(pageable);
+        return employeeService.getAllEmployeesPaginated(pageable, q, departmentId, skillId);
     }
+
+    // (CSV export/import removed as requested)
 
     @GetMapping("/{id}")
     public EmployeeDTO getById(@PathVariable Long id) { return employeeService.getEmployeeById(id); }

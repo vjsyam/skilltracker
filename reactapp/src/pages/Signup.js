@@ -25,10 +25,10 @@ export default function Signup() {
     setError("");
 
     try {
-      const data = await authService.signup(formData.name, formData.email, formData.password, formData.role);
+      await authService.signup(formData.name, formData.email, formData.password, formData.role);
       
       // authService.signup already sets localStorage values, no need to set them again
-      console.log('Signup successful, redirecting to home');
+      // Signup successful
       
       navigate("/home");
     } catch (err) {

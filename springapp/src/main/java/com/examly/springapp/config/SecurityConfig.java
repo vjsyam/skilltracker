@@ -31,10 +31,19 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/messages/**").permitAll() // Allow anyone to send messages
                 .requestMatchers(HttpMethod.GET, "/api/messages/**").hasAuthority("ADMIN") // Only admins can view messages
-                .requestMatchers("/api/employees/**").authenticated()
+                .requestMatchers("/api/notifications/**").authenticated()
+                // Tighten RBAC per SRS: employees read requires ADMIN
+                .requestMatchers(HttpMethod.GET, "/api/employees/**").hasAuthority("ADMIN")
+                // write operations protected
+                .requestMatchers(HttpMethod.POST, "/api/employees/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/employees/**").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/employees/**").authenticated()
+                // restrict signup to ADMIN
+                .requestMatchers(HttpMethod.POST, "/api/auth/signup").hasAuthority("ADMIN")
                 .requestMatchers("/api/departments/**").authenticated()
                 .requestMatchers("/api/skills/**").authenticated()
                 .requestMatchers("/api/reports/**").authenticated()
@@ -48,7 +57,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);

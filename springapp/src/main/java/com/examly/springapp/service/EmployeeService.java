@@ -30,18 +30,18 @@ public class EmployeeService {
                 .map(EmployeeDTO::new).collect(Collectors.toList());
     }
 
-    public PaginatedResponse<EmployeeDTO> getAllEmployeesPaginated(Pageable pageable) {
-        Page<Employee> employeePage = employeeRepository.findAllWithRelationsPaginated(pageable);
-        List<EmployeeDTO> employeeDTOs = employeePage.getContent().stream()
-                .map(EmployeeDTO::new)
-                .collect(Collectors.toList());
-        
-        return new PaginatedResponse<>(
-            employeeDTOs,
-            pageable.getPageNumber(),
-            pageable.getPageSize(),
-            employeePage.getTotalElements()
-        );
+    public PaginatedResponse<EmployeeDTO> getAllEmployeesPaginated(Pageable pageable, String q, Long departmentId, Long skillId) {
+        // Simple search: name/email/department/skill filtering via repo helpers
+        if ((q != null && !q.isBlank()) || departmentId != null || skillId != null) {
+            // fallback basic approach: page IDs and fetch with relations
+            Page<Long> idPage = employeeRepository.searchIds(q, departmentId, skillId, pageable);
+            List<Employee> list = idPage.getContent().isEmpty() ? List.of() : employeeRepository.findAllByIdInWithRelations(idPage.getContent());
+            List<EmployeeDTO> dtos = list.stream().map(EmployeeDTO::new).collect(Collectors.toList());
+            return new PaginatedResponse<>(dtos, pageable.getPageNumber(), pageable.getPageSize(), idPage.getTotalElements());
+        }
+        Page<Employee> page = employeeRepository.findAllWithRelationsPaginated(pageable);
+        List<EmployeeDTO> dtos = page.getContent().stream().map(EmployeeDTO::new).collect(Collectors.toList());
+        return new PaginatedResponse<>(dtos, pageable.getPageNumber(), pageable.getPageSize(), page.getTotalElements());
     }
 
     public EmployeeDTO getEmployeeById(Long id) {

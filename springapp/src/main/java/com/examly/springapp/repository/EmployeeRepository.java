@@ -35,4 +35,24 @@ List<Employee> findAllWithRelations();
        countQuery = "SELECT COUNT(DISTINCT e) FROM Employee e")
 Page<Employee> findAllWithRelationsPaginated(Pageable pageable);
 
+@Query(value = "SELECT DISTINCT e.id FROM Employee e " +
+       "LEFT JOIN e.user u " +
+       "LEFT JOIN e.department d " +
+       "LEFT JOIN e.skills s " +
+       "WHERE (:q IS NULL OR LOWER(u.name) LIKE LOWER(CONCAT('%', :q, '%')) OR LOWER(u.email) LIKE LOWER(CONCAT('%', :q, '%'))) " +
+       "AND (:departmentId IS NULL OR d.id = :departmentId) " +
+       "AND (:skillId IS NULL OR s.id = :skillId)")
+Page<Long> searchIds(@Param("q") String q,
+                     @Param("departmentId") Long departmentId,
+                     @Param("skillId") Long skillId,
+                     Pageable pageable);
+
+@Query("SELECT DISTINCT e FROM Employee e " +
+       "LEFT JOIN FETCH e.user " +
+       "LEFT JOIN FETCH e.manager " +
+       "LEFT JOIN FETCH e.department " +
+       "LEFT JOIN FETCH e.skills " +
+       "WHERE e.id IN :ids")
+List<Employee> findAllByIdInWithRelations(@Param("ids") List<Long> ids);
+
 }

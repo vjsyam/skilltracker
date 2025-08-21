@@ -1,4 +1,4 @@
-import { apiGet, apiPost } from "./api";
+import { apiGet } from "./api";
 
 export const getMessages = async (page = 0, size = 10, sortBy = "createdAt", sortDir = "desc") => {
   try {
