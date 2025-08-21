@@ -54,11 +54,11 @@ export default function Navbar() {
             <Link to="/messages" onClick={() => setMenuOpen(false)}>Messages</Link>
           </li>
         </AdminOnly>
-        <AdminOnly>
+        {/* <AdminOnly>
           <li>
             <Link to="/admin" onClick={() => setMenuOpen(false)}>Admin Panel</Link>
           </li>
-        </AdminOnly>
+        </AdminOnly> */}
         {user && (
           <>
             <li className="user-info">

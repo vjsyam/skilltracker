@@ -1,7 +1,10 @@
 package com.examly.springapp.service;
 
+import com.examly.springapp.dto.PaginatedResponse;
 import com.examly.springapp.model.Message;
 import com.examly.springapp.repository.MessageRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -20,5 +23,15 @@ public class MessageService {
 
     public List<Message> getAllMessages() {
         return repo.findAll();
+    }
+
+    public PaginatedResponse<Message> getAllMessagesPaginated(Pageable pageable) {
+        Page<Message> messagePage = repo.findAll(pageable);
+        return new PaginatedResponse<>(
+            messagePage.getContent(),
+            pageable.getPageNumber(),
+            pageable.getPageSize(),
+            messagePage.getTotalElements()
+        );
     }
 }

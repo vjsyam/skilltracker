@@ -1,8 +1,11 @@
 package com.examly.springapp.service;
 
+import com.examly.springapp.dto.PaginatedResponse;
 import com.examly.springapp.model.Skill;
 import com.examly.springapp.repository.SkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +18,16 @@ public class SkillService {
 
     public List<Skill> getAllSkills() {
         return skillRepository.findAll();
+    }
+
+    public PaginatedResponse<Skill> getAllSkillsPaginated(Pageable pageable) {
+        Page<Skill> skillPage = skillRepository.findAll(pageable);
+        return new PaginatedResponse<>(
+            skillPage.getContent(),
+            pageable.getPageNumber(),
+            pageable.getPageSize(),
+            skillPage.getTotalElements()
+        );
     }
 
     public Skill getSkillById(Long id) {

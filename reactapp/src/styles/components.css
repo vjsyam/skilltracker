@@ -438,6 +438,68 @@
   transform: translateY(-1px);
 }
 
+/* Sorting and Pagination Styles */
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+  position: relative;
+}
+
+.sortable-header:hover {
+  background-color: rgba(69, 104, 130, 0.1);
+}
+
+.sortable-header svg {
+  margin-left: 4px;
+  font-size: 0.8em;
+  color: #456882;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding: 16px;
+  background: rgba(249, 243, 239, 0.9);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  border: 1px solid #d2c1b6;
+}
+
+.pagination-info {
+  color: #1b3c53;
+  font-size: 0.9em;
+}
+
+.pagination-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pagination-buttons .glass-btn {
+  padding: 8px 12px;
+  font-size: 0.9em;
+  min-width: auto;
+}
+
+.pagination-buttons .glass-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #d2c1b6;
+}
+
+.page-info {
+  padding: 8px 12px;
+  background: rgba(69, 104, 130, 0.1);
+  border-radius: 6px;
+  color: #1b3c53;
+  font-weight: 500;
+  margin: 0 8px;
+}
+
 /* responsive */
 @media (max-width: 720px) {
   .modal { 

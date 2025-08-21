@@ -18,11 +18,23 @@ export default function Departments() {
     setLoading(true);
     try {
       const response = await getDepartments();
-      setDepartments(response.data);
+      // Handle different response structures
+      let deptData = [];
+      if (response && response.content) {
+        deptData = response.content;
+      } else if (response && response.data) {
+        deptData = response.data;
+      } else if (Array.isArray(response)) {
+        deptData = response;
+      } else {
+        deptData = [];
+      }
+      setDepartments(deptData);
       setError(null);
     } catch (err) {
       console.error("Failed to fetch departments:", err);
       setError("Failed to load departments");
+      setDepartments([]);
     } finally {
       setLoading(false);
     }
@@ -71,52 +83,52 @@ export default function Departments() {
               <th>ID</th>
               <th>Department Name</th>
               <th>Employees</th>
-                             <th>Actions</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {departments.length > 0 ? (
+            {departments && departments.length > 0 ? (
               departments.map((dept) => (
                 <tr key={dept.id}>
                   <td>{dept.id}</td>
                   <td>{dept.name}</td>
                   <td>
-                    {dept.employees && dept.employees.length > 0
+                    {dept.employees && Array.isArray(dept.employees) && dept.employees.length > 0
                       ? `${dept.employees.length} employee${
                           dept.employees.length > 1 ? "s" : ""
                         }`
                       : <em>No employees</em>}
                   </td>
-                                     <td>
-                     <ViewOnly>
-                       <button
-                         className="glass-btn view"
-                         onClick={() => {
-                           setEditData(dept);
-                           setShowForm(true);
-                         }}
-                       >
-                         <FaEye /> View
-                       </button>
-                     </ViewOnly>
-                     <AdminOnly>
-                       <button
-                         className="glass-btn"
-                         onClick={() => {
-                           setEditData(dept);
-                           setShowForm(true);
-                         }}
-                       >
-                         <FaEdit /> Edit
-                       </button>
-                       <button
-                         className="glass-btn delete"
-                         onClick={() => handleDelete(dept.id)}
-                       >
-                         <FaTrash /> Delete
-                       </button>
-                     </AdminOnly>
-                   </td>
+                  <td>
+                    <ViewOnly>
+                      <button
+                        className="glass-btn view"
+                        onClick={() => {
+                          setEditData(dept);
+                          setShowForm(true);
+                        }}
+                      >
+                        <FaEye /> View
+                      </button>
+                    </ViewOnly>
+                    <AdminOnly>
+                      <button
+                        className="glass-btn"
+                        onClick={() => {
+                          setEditData(dept);
+                          setShowForm(true);
+                        }}
+                      >
+                        <FaEdit /> Edit
+                      </button>
+                      <button
+                        className="glass-btn delete"
+                        onClick={() => handleDelete(dept.id)}
+                      >
+                        <FaTrash /> Delete
+                      </button>
+                    </AdminOnly>
+                  </td>
                 </tr>
               ))
             ) : (
@@ -130,14 +142,14 @@ export default function Departments() {
         </table>
       </div>
 
-             {showForm && (
-         <DepartmentForm
-           existingData={editData}
-           onClose={() => setShowForm(false)}
-           onSave={fetchDepartments}
-           isViewOnly={!authService.isAdmin()}
-         />
-       )}
+      {showForm && (
+        <DepartmentForm
+          existingData={editData}
+          onClose={() => setShowForm(false)}
+          onSave={fetchDepartments}
+          isViewOnly={!authService.isAdmin()}
+        />
+      )}
     </div>
   );
 }

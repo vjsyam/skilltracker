@@ -9,7 +9,7 @@ export default function Signup() {
     name: "", 
     email: "", 
     password: "",
-    role: "employee" 
+    role: "EMPLOYEE" 
   });
 
   const handleChange = (e) => {
@@ -27,9 +27,8 @@ export default function Signup() {
     try {
       const data = await authService.signup(formData.name, formData.email, formData.password, formData.role);
       
-      // Store user data in localStorage
-      localStorage.setItem("user", JSON.stringify(data.user));
-      localStorage.setItem("isLoggedIn", "true");
+      // authService.signup already sets localStorage values, no need to set them again
+      console.log('Signup successful, redirecting to home');
       
       navigate("/home");
     } catch (err) {
@@ -93,8 +92,8 @@ export default function Signup() {
                 className="role-select"
                 required
               >
-                <option value="employee">Employee</option>
-                <option value="admin">Admin</option>
+                <option value="EMPLOYEE">Employee</option>
+                <option value="ADMIN">Admin</option>
               </select>
             </div>
             <button type="submit" className="auth-btn primary" disabled={isLoading}>

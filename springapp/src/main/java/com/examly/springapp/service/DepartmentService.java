@@ -4,7 +4,10 @@ import com.examly.springapp.model.Department;
 import com.examly.springapp.model.Employee;
 import com.examly.springapp.repository.DepartmentRepository;
 import com.examly.springapp.repository.EmployeeRepository;
+import com.examly.springapp.dto.PaginatedResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +28,16 @@ public class DepartmentService {
 
     public List<Department> getAllDepartments() {
         return departmentRepository.findAll();
+    }
+
+    public PaginatedResponse<Department> getAllDepartmentsPaginated(Pageable pageable) {
+        Page<Department> departmentPage = departmentRepository.findAll(pageable);
+        return new PaginatedResponse<>(
+            departmentPage.getContent(),
+            pageable.getPageNumber(),
+            pageable.getPageSize(),
+            departmentPage.getTotalElements()
+        );
     }
 
     public Optional<Department> getDepartmentById(Long id) {

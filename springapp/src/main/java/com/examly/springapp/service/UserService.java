@@ -51,8 +51,6 @@ public class UserService {
     public User authenticateUser(String email, String password) {
         User user = findByEmail(email);
         
-
-        
         if (user != null && password.equals(user.getPassword())) {
             // Normalize role to match expected format
             if ("Manager".equals(user.getRole()) || "MANAGER".equals(user.getRole()) || "Admin".equals(user.getRole()) || "ADMIN".equals(user.getRole())) {

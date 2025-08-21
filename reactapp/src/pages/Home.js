@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/homepage.css";
+import { sendMessage } from "../services/messageService";
 import { 
   FaUserFriends,
   FaUserGraduate, 
@@ -17,6 +18,7 @@ export default function Homepage() {
     content: ""
   });
   const [status, setStatus] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,20 +26,18 @@ export default function Homepage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setStatus("");
+    
     try {
-      const res = await fetch("http://localhost:8080/api/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
-      });
-      if (res.ok) {
-        setStatus("✅ Message sent successfully!");
-        setFormData({ name: "", email: "", content: "" });
-      } else {
-        setStatus("❌ Failed to send message.");
-      }
+      await sendMessage(formData);
+      setStatus("✅ Message sent successfully!");
+      setFormData({ name: "", email: "", content: "" });
     } catch (err) {
-      setStatus("⚠️ Error connecting to server.");
+      console.error("Error sending message:", err);
+      setStatus("❌ Failed to send message. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -173,7 +173,9 @@ export default function Homepage() {
             onChange={handleChange}
             required
           ></textarea>
-          <button type="submit">Send</button>
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Sending..." : "Send"}
+          </button>
         </form>
         {status && <p className="status-msg">{status}</p>}
       </section>

@@ -31,16 +31,32 @@ export default function Reports() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    getReports()
-      .then((res) => {
-        setReportData(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
+    const fetchReports = async () => {
+      try {
+        const response = await getReports();
+        
+        // Handle different response structures
+        let data = null;
+        if (response && response.data) {
+          data = response.data;
+        } else if (response && response.content) {
+          data = response.content;
+        } else if (response) {
+          data = response;
+        }
+        
+        setReportData(data);
+        setError(null);
+      } catch (err) {
         console.error("Error fetching reports:", err);
         setError("Failed to load reports");
+        setReportData(null);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchReports();
   }, []);
 
   const chartOptions = {

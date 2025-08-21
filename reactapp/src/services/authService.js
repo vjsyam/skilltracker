@@ -1,7 +1,6 @@
 const API_BASE_URL = "http://localhost:8080/api/auth";
 
 export const authService = {
-  // Login user
   async login(email, password) {
     const response = await fetch(`${API_BASE_URL}/login`, {
       method: "POST",
@@ -17,10 +16,17 @@ export const authService = {
       throw new Error(data.message || "Login failed");
     }
 
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("isLoggedIn", "true");
+      if (data.user) {
+        localStorage.setItem("user", JSON.stringify(data.user));
+      }
+    }
+
     return data;
   },
 
-  // Signup user
   async signup(name, email, password, role) {
     const response = await fetch(`${API_BASE_URL}/signup`, {
       method: "POST",
@@ -36,35 +42,47 @@ export const authService = {
       throw new Error(data.message || "Signup failed");
     }
 
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("isLoggedIn", "true");
+      if (data.user) {
+        localStorage.setItem("user", JSON.stringify(data.user));
+      }
+    }
+
     return data;
   },
 
-  // Logout user
   logout() {
     localStorage.removeItem("user");
     localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("token");
   },
 
-  // Get current user
   getCurrentUser() {
     const user = localStorage.getItem("user");
     return user ? JSON.parse(user) : null;
   },
 
-  // Check if user is logged in
   isLoggedIn() {
-    return localStorage.getItem("isLoggedIn") === "true";
+    return localStorage.getItem("isLoggedIn") === "true" && !!localStorage.getItem("token");
   },
 
-  // Check if user is admin
   isAdmin() {
     const user = this.getCurrentUser();
     return user && user.role === "ADMIN";
   },
 
-  // Check if user is employee
   isEmployee() {
     const user = this.getCurrentUser();
     return user && user.role === "EMPLOYEE";
+  },
+
+  getToken() {
+    return localStorage.getItem("token");
+  },
+
+  hasToken() {
+    return !!localStorage.getItem("token");
   }
 };

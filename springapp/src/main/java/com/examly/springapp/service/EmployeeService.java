@@ -1,6 +1,7 @@
 package com.examly.springapp.service;
 
 import com.examly.springapp.dto.EmployeeDTO;
+import com.examly.springapp.dto.PaginatedResponse;
 import com.examly.springapp.model.Employee;
 import com.examly.springapp.model.Skill;
 import com.examly.springapp.repository.EmployeeRepository;
@@ -8,6 +9,8 @@ import com.examly.springapp.repository.UserRepository;
 import com.examly.springapp.repository.DepartmentRepository;
 import com.examly.springapp.repository.SkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +28,20 @@ public class EmployeeService {
     public List<EmployeeDTO> getAllEmployees() {
         return employeeRepository.findAllWithRelations().stream()
                 .map(EmployeeDTO::new).collect(Collectors.toList());
+    }
+
+    public PaginatedResponse<EmployeeDTO> getAllEmployeesPaginated(Pageable pageable) {
+        Page<Employee> employeePage = employeeRepository.findAllWithRelationsPaginated(pageable);
+        List<EmployeeDTO> employeeDTOs = employeePage.getContent().stream()
+                .map(EmployeeDTO::new)
+                .collect(Collectors.toList());
+        
+        return new PaginatedResponse<>(
+            employeeDTOs,
+            pageable.getPageNumber(),
+            pageable.getPageSize(),
+            employeePage.getTotalElements()
+        );
     }
 
     public EmployeeDTO getEmployeeById(Long id) {

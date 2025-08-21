@@ -1,5 +1,6 @@
 package com.examly.springapp.controller;
 
+import com.examly.springapp.config.JwtUtil;
 import com.examly.springapp.model.User;
 import com.examly.springapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody User user) {
@@ -76,12 +80,16 @@ public class AuthController {
             User user = userService.authenticateUser(email, password);
             
             if (user != null) {
+                // Generate JWT token
+                String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
+                
                 // Don't return password in response
                 user.setPassword(null);
                 
                 Map<String, Object> response = new HashMap<>();
                 response.put("message", "Login successful");
                 response.put("user", user);
+                response.put("token", token);
                 
                 return ResponseEntity.ok(response);
             } else {
