@@ -6,6 +6,7 @@ import EmployeeForm from "../pages/EmployeeForm";
 import { AdminOnly } from "../components/RoleBasedAccess";
 import { authService } from "../services/authService";
 import { FaUserEdit, FaTrash, FaPlus, FaChevronLeft, FaChevronRight, FaSort, FaSortUp, FaSortDown, FaFileImport, FaFileExport } from "react-icons/fa";
+import FloatingParticles from "../components/FloatingParticles";
 
 export default function Employees() {
   const [employees, setEmployees] = useState([]);
@@ -170,6 +171,7 @@ export default function Employees() {
 
   return (
     <div className="page glass">
+      <FloatingParticles />
       <div className="page-header">
         <div>
           <h1 className="heading-gradient">Employee Management</h1>

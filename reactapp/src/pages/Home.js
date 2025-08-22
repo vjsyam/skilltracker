@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../styles/homepage.css";
 import { sendMessage } from "../services/messageService";
+import { getReports } from "../services/reportsService";
 import { 
   FaUserFriends,
   FaUserGraduate, 
@@ -10,9 +11,122 @@ import {
   FaClipboardCheck,
   FaChartPie,
   FaIdBadge,
-  FaEnvelope
+  FaEnvelope,
+  FaBell,
+  FaClock,
+  FaStar,
+  FaChartLine,
+  FaUsers,
+  FaLightbulb,
+  FaRocket
 } from "react-icons/fa";
 import { authService } from "../services/authService";
+import FloatingParticles from "../components/FloatingParticles";
+
+// Welcome Animation Component
+function WelcomeAnimation({ userName, isVisible }) {
+  return (
+    <div className={`welcome-animation ${isVisible ? 'visible' : ''}`}>
+      <div className="welcome-content">
+        <h1 className="welcome-text">
+          Welcome back, <span className="highlight">{userName}</span>! 👋
+        </h1>
+        <div className="welcome-subtitle">
+          Ready to make today productive?
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Quick Stats Component
+function QuickStats({ isAdmin, reportData }) {
+  const stats = isAdmin ? [
+    { icon: <FaUsers />, label: "Total Employees", value: reportData?.totalEmployees || "0", trend: "Live", color: "#FF6B6B" },
+    { icon: <FaClipboardCheck />, label: "Active Skills", value: reportData?.totalSkills || "0", trend: "Live", color: "#FF9F9F" },
+    { icon: <FaChartPie />, label: "Departments", value: reportData?.totalDepartments || "0", trend: "Live", color: "#FFD93D" },
+    { icon: <FaChartLine />, label: "Growth Rate", value: "23%", trend: "+8%", color: "#00C851" }
+  ] : [
+    { icon: <FaStar />, label: "My Skills", value: "12", trend: "+3", color: "#FF6B6B" },
+    { icon: <FaLightbulb />, label: "Learning", value: "4", trend: "Active", color: "#FF9F9F" },
+    { icon: <FaChartBar />, label: "Progress", value: "78%", trend: "+5%", color: "#FFD93D" },
+    { icon: <FaRocket />, label: "Goals", value: "3", trend: "On Track", color: "#00C851" }
+  ];
+
+  return (
+    <div className="quick-stats">
+      {stats.map((stat, index) => (
+        <div key={index} className="stat-card glass" style={{ animationDelay: `${index * 0.1}s` }}>
+          <div className="stat-icon" style={{ color: stat.color }}>
+            {stat.icon}
+          </div>
+          <div className="stat-content">
+            <div className="stat-value">{stat.value}</div>
+            <div className="stat-label">{stat.label}</div>
+            <div className="stat-trend" style={{ color: stat.color }}>
+              {stat.trend}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Recent Activity Component
+function RecentActivity({ isAdmin }) {
+  const activities = isAdmin ? [
+    { type: "employee", message: "New employee John Doe added", time: "2 minutes ago", icon: <FaUserTie /> },
+    { type: "skill", message: "React.js skill updated", time: "15 minutes ago", icon: <FaClipboardCheck /> },
+    { type: "report", message: "Monthly report generated", time: "1 hour ago", icon: <FaChartPie /> },
+    { type: "message", message: "New message from Sarah", time: "2 hours ago", icon: <FaEnvelope /> }
+  ] : [
+    { type: "skill", message: "Added Python to your skills", time: "1 hour ago", icon: <FaStar /> },
+    { type: "learning", message: "Completed React basics module", time: "3 hours ago", icon: <FaLightbulb /> },
+    { type: "goal", message: "Achieved 75% of monthly goal", time: "1 day ago", icon: <FaRocket /> },
+    { type: "feedback", message: "Received positive feedback", time: "2 days ago", icon: <FaBell /> }
+  ];
+
+  return (
+    <div className="recent-activity glass">
+      <div className="activity-header">
+        <h3><FaClock /> Recent Activity</h3>
+        <span className="activity-count">{activities.length} updates</span>
+      </div>
+      <div className="activity-list">
+        {activities.map((activity, index) => (
+          <div key={index} className="activity-item" style={{ animationDelay: `${index * 0.1}s` }}>
+            <div className="activity-icon">
+              {activity.icon}
+            </div>
+            <div className="activity-content">
+              <div className="activity-message">{activity.message}</div>
+              <div className="activity-time">{activity.time}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Status Indicator Component
+function StatusIndicator({ status = "online" }) {
+  const statusConfig = {
+    online: { color: "#00C851", text: "System Online", icon: "🟢" },
+    maintenance: { color: "#FF8800", text: "Maintenance Mode", icon: "🟡" },
+    offline: { color: "#ff4444", text: "System Offline", icon: "🔴" }
+  };
+
+  const config = statusConfig[status];
+
+  return (
+    <div className="status-indicator" style={{ color: config.color }}>
+      <span className="status-icon">{config.icon}</span>
+      <span className="status-text">{config.text}</span>
+    </div>
+  );
+}
 
 export default function Homepage() {
   const [formData, setFormData] = useState({
@@ -22,9 +136,52 @@ export default function Homepage() {
   });
   const [status, setStatus] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [reportData, setReportData] = useState(null);
 
   const user = useMemo(() => authService.getCurrentUser(), []);
   const isAdmin = user?.role === "ADMIN";
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      try {
+        const response = await getReports();
+        let data = null;
+        if (response && response.data) {
+          data = response.data;
+        } else if (response && response.content) {
+          data = response.content;
+        } else if (response) {
+          data = response;
+        }
+        
+        if (data) {
+          // Calculate totals from the data
+          const totalEmployees = Object.values(data.employeesPerDepartment || {}).reduce((sum, count) => sum + count, 0);
+          const totalSkills = Object.values(data.skillsCount || {}).reduce((sum, count) => sum + count, 0);
+          const totalDepartments = Object.keys(data.employeesPerDepartment || {}).length;
+          
+          setReportData({
+            ...data,
+            totalEmployees: totalEmployees.toString(),
+            totalSkills: totalSkills.toString(),
+            totalDepartments: totalDepartments.toString()
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching reports for homepage:", err);
+        // Don't show error on homepage, just use default values
+      }
+    };
+
+    if (isAdmin) {
+      fetchReports();
+    }
+  }, [isAdmin]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -112,115 +269,97 @@ export default function Homepage() {
 
   const secondaryFeaturesEmployee = [
     {
-      icon: <FaIdBadge />,
+      icon: <FaStar />,
       title: "My Profile",
-      description: "View your department, manager, and skills.",
+      description: "View your personal information and current skills.",
       link: "/me"
     },
     {
       icon: <FaUserGraduate />,
-      title: "Explore New Skills",
-      description: "Discover 100 skills and what they offer.",
+      title: "New Skills",
+      description: "Explore and add new skills to your learning journey.",
       link: "/new-skills"
     }
   ];
 
-  const secondaryFeatures = isAdmin ? secondaryFeaturesAdmin : secondaryFeaturesEmployee;
-
   return (
     <div className="homepage">
-      <header className="hero glass">
-        <div className="hero-content">
-          <h1>Powerful Features for Modern Businesses</h1>
-          <p>
-            Discover how our comprehensive skill tracking platform helps organizations 
-            build stronger, more capable teams.
-          </p>
-        </div>
-        <div className="hero-image">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png"
-            alt="Team working"
-          />
-        </div>
-      </header>
+      <FloatingParticles />
+      <WelcomeAnimation userName={user?.name || "User"} isVisible={isVisible} />
+      
+      <StatusIndicator status="online" />
 
-      <section className="primary-features">
-        <div className="section-header">
-          <h2>Our Core Capabilities</h2>
-          <p className="section-subtitle">
-            Designed to help you maximize your team's potential
-          </p>
-        </div>
+      <QuickStats isAdmin={isAdmin} reportData={reportData} />
 
-        <div className="features-grid">
-          {primaryFeatures.map((feature, index) => (
-            <div key={index} className="feature-card">
-              <div className="feature-icon">{feature.icon}</div>
-              <h3>{feature.title}</h3>
-              <p>{feature.description}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="secondary-features">
-        <div className="section-header">
-          <h2>{isAdmin ? "Explore More Features" : "Your Quick Links"}</h2>
-          <p className="section-subtitle">
-            {isAdmin ? "Additional tools to help you manage your workforce effectively" : "Access your profile and discover skills"}
-          </p>
-        </div>
-
-        <div className="features-grid-minimal">
-          {secondaryFeatures.map((feature, index) => (
-            <div key={index} className="feature-block">
-              <div className="block-icon">{feature.icon}</div>
-              <div className="block-content">
+      <div className="homepage-content">
+        <section className="primary-features">
+          <h2>Core Features</h2>
+          <div className="features-grid">
+            {primaryFeatures.map((feature, index) => (
+              <div key={index} className="feature-card glass hover-lift">
+                <div className="feature-icon">{feature.icon}</div>
                 <h3>{feature.title}</h3>
                 <p>{feature.description}</p>
-                <Link to={feature.link} className="block-link">
-                  {isAdmin ? "Explore" : "Open"} <span>→</span>
-                </Link>
               </div>
-            </div>
-          ))}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
 
-      <section className="contact-section glass">
-        <h2>Connect with Admin</h2>
-        <form className="contact-form" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="name"
-            placeholder="Your Name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Your Email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-          <textarea
-            name="content"
-            placeholder="Message for admin..."
-            rows="4"
-            value={formData.content}
-            onChange={handleChange}
-            required
-          ></textarea>
-          <button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Sending..." : "Send"}
-          </button>
-        </form>
-        {status && <p className="status-msg">{status}</p>}
-      </section>
+        <section className="secondary-features">
+          <h2>Explore More Features</h2>
+          <div className="features-grid">
+            {(isAdmin ? secondaryFeaturesAdmin : secondaryFeaturesEmployee).map((feature, index) => (
+              <Link key={index} to={feature.link} className="feature-card glass hover-lift link-card">
+                <div className="feature-icon">{feature.icon}</div>
+                <h3>{feature.title}</h3>
+                <p>{feature.description}</p>
+                <div className="feature-arrow">→</div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <div className="homepage-bottom">
+          <RecentActivity isAdmin={isAdmin} />
+
+          <section className="contact-section glass">
+            <h2>Get in Touch</h2>
+            <p>Have questions or suggestions? We'd love to hear from you!</p>
+            <form onSubmit={handleSubmit} className="contact-form">
+              <div className="form-row">
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Your name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Your email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <textarea
+                name="content"
+                placeholder="Your message"
+                value={formData.content}
+                onChange={handleChange}
+                required
+                rows="4"
+              />
+              <button type="submit" disabled={isSubmitting} className="submit-btn">
+                {isSubmitting ? "Sending..." : "Send Message"}
+              </button>
+            </form>
+            {status && <div className="status-message">{status}</div>}
+          </section>
+        </div>
+      </div>
     </div>
   );
 }

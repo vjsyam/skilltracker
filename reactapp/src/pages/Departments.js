@@ -6,6 +6,7 @@ import DepartmentForm from "./DepartmentForm";
 import { AdminOnly } from "../components/RoleBasedAccess";
 import { authService } from "../services/authService";
 import { FaEdit, FaTrash, FaPlus, FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
+import FloatingParticles from "../components/FloatingParticles";
 
 export default function Departments() {
   const [departments, setDepartments] = useState([]);
@@ -80,6 +81,7 @@ export default function Departments() {
 
   return (
     <div className="page glass">
+      <FloatingParticles />
       <div className="page-header">
         <div>
           <h1 className="heading-gradient">Departments</h1>

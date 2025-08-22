@@ -4,6 +4,7 @@ import { authService } from "../services/authService";
 import { getEmployees } from "../services/employeeService";
 import { getSkills } from "../services/skillService";
 import { FaUser, FaBuilding, FaUserTie, FaStar, FaBolt } from "react-icons/fa";
+import FloatingParticles from "../components/FloatingParticles";
 
 function readOngoing() {
   try {
@@ -84,6 +85,7 @@ export default function EmployeePortal() {
 
   return (
     <div className="page glass">
+      <FloatingParticles />
       <div className="alt-header fade-in">
         <div>
           <h1 className="alt-title" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>

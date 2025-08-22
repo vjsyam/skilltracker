@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { authService } from "../services/authService";
 import "../styles/auth.css";
+import FloatingParticles from "../components/FloatingParticles";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -18,6 +19,11 @@ export default function Signup() {
 
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,8 +46,9 @@ export default function Signup() {
 
   return (
     <div className="auth-page">
+      <FloatingParticles />
       <div className="auth-wrapper">
-        <div className="auth-container glass">
+        <div className={`auth-container glass ${isVisible ? 'slide-in' : ''}`}>
           <div className="auth-header">
             <h2>Sign Up</h2>
             <p>Create your account to get started.</p>

@@ -6,6 +6,7 @@ import SkillForm from "./SkillForm";
 import { AdminOnly } from "../components/RoleBasedAccess";
 import { authService } from "../services/authService";
 import { FaEdit, FaTrash, FaPlus, FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
+import FloatingParticles from "../components/FloatingParticles";
 
 export default function Skills() {
   const [skills, setSkills] = useState([]);
@@ -77,6 +78,7 @@ export default function Skills() {
 
   return (
     <div className="page glass">
+      <FloatingParticles />
       <div className="page-header">
         <div>
           <h1 className="heading-gradient">Skill Tracking</h1>
