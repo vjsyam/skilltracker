@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.HashSet;
 
 @Service
 public class EmployeeService {
@@ -55,24 +56,36 @@ public class EmployeeService {
         // resolve user
         if (payload.getUser() != null && payload.getUser().getId() != null) {
             payload.setUser(userRepository.findById(payload.getUser().getId())
-                    .orElseThrow(() -> new RuntimeException("User not found")));
+                    .orElseThrow(() -> new RuntimeException("User not found with ID: " + payload.getUser().getId())));
+        } else {
+            throw new RuntimeException("User ID is required");
         }
-        // manager
-        if (payload.getManager() != null && payload.getManager().getId() != null) {
+        
+        // manager (optional)
+        if (payload.getManager() != null && payload.getManager().getId() != null && payload.getManager().getId() > 0) {
             payload.setManager(userRepository.findById(payload.getManager().getId())
-                    .orElseThrow(() -> new RuntimeException("Manager not found")));
+                    .orElseThrow(() -> new RuntimeException("Manager not found with ID: " + payload.getManager().getId())));
+        } else {
+            payload.setManager(null); // Set to null if no manager
         }
+        
         // department
         if (payload.getDepartment() != null && payload.getDepartment().getId() != null) {
             payload.setDepartment(departmentRepository.findById(payload.getDepartment().getId())
-                    .orElseThrow(() -> new RuntimeException("Department not found")));
+                    .orElseThrow(() -> new RuntimeException("Department not found with ID: " + payload.getDepartment().getId())));
+        } else {
+            throw new RuntimeException("Department ID is required");
         }
-        // skills
+        
+        // skills (optional)
         if (payload.getSkills() != null && !payload.getSkills().isEmpty()) {
             Set<Skill> resolved = payload.getSkills().stream()
-                .map(s -> skillRepository.findById(s.getId()).orElseThrow(() -> new RuntimeException("Skill not found: " + s.getId())))
+                .filter(s -> s.getId() != null && s.getId() > 0)
+                .map(s -> skillRepository.findById(s.getId()).orElseThrow(() -> new RuntimeException("Skill not found with ID: " + s.getId())))
                 .collect(Collectors.toSet());
             payload.setSkills(resolved);
+        } else {
+            payload.setSkills(new HashSet<>()); // Set to empty set if no skills
         }
 
         Employee saved = employeeRepository.save(payload);
@@ -83,20 +96,33 @@ public class EmployeeService {
 
     @Transactional
     public EmployeeDTO updateEmployee(Long id, Employee payload) {
-        Employee emp = employeeRepository.findById(id).orElseThrow(() -> new RuntimeException("Employee not found"));
+        Employee emp = employeeRepository.findById(id).orElseThrow(() -> new RuntimeException("Employee not found with ID: " + id));
+        
         // same resolution logic as create, but set onto emp
-        if (payload.getUser() != null && payload.getUser().getId() != null)
-            emp.setUser(userRepository.findById(payload.getUser().getId()).orElseThrow(() -> new RuntimeException("User not found")));
-        if (payload.getManager() != null && payload.getManager().getId() != null)
-            emp.setManager(userRepository.findById(payload.getManager().getId()).orElseThrow(() -> new RuntimeException("Manager not found")));
-        if (payload.getDepartment() != null && payload.getDepartment().getId() != null)
-            emp.setDepartment(departmentRepository.findById(payload.getDepartment().getId()).orElseThrow(() -> new RuntimeException("Department not found")));
+        if (payload.getUser() != null && payload.getUser().getId() != null) {
+            emp.setUser(userRepository.findById(payload.getUser().getId()).orElseThrow(() -> new RuntimeException("User not found with ID: " + payload.getUser().getId())));
+        }
+        
+        if (payload.getManager() != null && payload.getManager().getId() != null && payload.getManager().getId() > 0) {
+            emp.setManager(userRepository.findById(payload.getManager().getId()).orElseThrow(() -> new RuntimeException("Manager not found with ID: " + payload.getManager().getId())));
+        } else {
+            emp.setManager(null); // Set to null if no manager
+        }
+        
+        if (payload.getDepartment() != null && payload.getDepartment().getId() != null) {
+            emp.setDepartment(departmentRepository.findById(payload.getDepartment().getId()).orElseThrow(() -> new RuntimeException("Department not found with ID: " + payload.getDepartment().getId())));
+        }
+        
         if (payload.getSkills() != null) {
             Set<Skill> resolved = payload.getSkills().stream()
-                .map(s -> skillRepository.findById(s.getId()).orElseThrow(() -> new RuntimeException("Skill not found: " + s.getId())))
+                .filter(s -> s.getId() != null && s.getId() > 0)
+                .map(s -> skillRepository.findById(s.getId()).orElseThrow(() -> new RuntimeException("Skill not found with ID: " + s.getId())))
                 .collect(Collectors.toSet());
             emp.setSkills(resolved);
+        } else {
+            emp.setSkills(new HashSet<>()); // Set to empty set if no skills
         }
+        
         Employee saved = employeeRepository.save(emp);
         return employeeRepository.findByIdWithRelations(saved.getId()).map(EmployeeDTO::new)
                 .orElseThrow(() -> new RuntimeException("Failed to fetch updated employee"));

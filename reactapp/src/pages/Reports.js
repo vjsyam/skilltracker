@@ -146,15 +146,19 @@ export default function Reports() {
   return (
     <div className="page glass">
       <div className="page-header">
-        <h1>Reports & Analytics</h1>
+        <div>
+          <h1>Reports & Analytics</h1>
+          <p className="page-subtitle">Visualize department sizes and skill distribution</p>
+        </div>
       </div>
 
       <div className="charts-grid">
         {departmentNames.length > 0 && departmentSkillData && (
-          <div className="chart-card">
+          <div className="alt-card hover-lift">
             <div className="chart-title">
               <h2><FaChartBar /> Employees per Department</h2>
             </div>
+            <div className="soft-divider" />
             <div className="chart-container">
               <Bar 
                 data={departmentSkillData} 
@@ -165,10 +169,11 @@ export default function Reports() {
         )}
 
         {skillNames.length > 0 && skillDistributionData && (
-          <div className="chart-card">
+          <div className="alt-card hover-lift">
             <div className="chart-title">
               <h2><FaChartPie /> Skill Distribution</h2>
             </div>
+            <div className="soft-divider" />
             <div className="chart-container">
               <Pie 
                 data={skillDistributionData} 

@@ -42,8 +42,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 email = jwtUtil.extractEmail(jwt);
                 role = jwtUtil.extractRole(jwt);
+                // Debug logs
+                System.out.println("JWT Filter: token present. email=" + email + ", role=" + role);
             } catch (Exception e) {
-                // Token is invalid, continue without authentication
+                System.err.println("JWT Filter: token parsing failed: " + e.getMessage());
+            }
+        } else {
+            // Debug logs
+            if (authorizationHeader == null) {
+                System.out.println("JWT Filter: no Authorization header");
+            } else {
+                System.out.println("JWT Filter: Authorization header without Bearer prefix");
             }
         }
 
@@ -51,16 +60,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
 
             if (jwtUtil.validateToken(jwt)) {
-                // Create authorities based on JWT token role
                 List<SimpleGrantedAuthority> authorities = new ArrayList<>();
                 if (role != null) {
                     authorities.add(new SimpleGrantedAuthority(role));
                 }
+                System.out.println("JWT Filter: setting authentication for " + email + " with authorities=" + authorities);
                 
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, authorities);
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+            } else {
+                System.err.println("JWT Filter: token validation failed");
             }
         }
         filterChain.doFilter(request, response);

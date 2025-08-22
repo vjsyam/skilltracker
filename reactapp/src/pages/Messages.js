@@ -90,84 +90,90 @@ export default function Messages() {
   return (
     <div className="page glass">
       <div className="page-header">
-        <h1><FaEnvelope /> Admin Messages</h1>
+        <div>
+          <h1><FaEnvelope /> Admin Messages</h1>
+          <p className="page-subtitle">Incoming messages from users</p>
+        </div>
       </div>
       
       {error && <div className="error-message">{error}</div>}
-      
       {messages && messages.length === 0 ? (
         <div className="alert info">
           No messages found in the system.
         </div>
       ) : (
-        <div className="table-wrap">
-          <table className="glass-table">
-            <thead>
-              <tr>
-                <th onClick={() => handleSort("name")} className="sortable-header">
-                  Name {getSortIcon("name")}
-                </th>
-                <th onClick={() => handleSort("email")} className="sortable-header">
-                  Email {getSortIcon("email")}
-                </th>
-                <th>Message</th>
-                <th onClick={() => handleSort("createdAt")} className="sortable-header">
-                  <FaClock /> Date {getSortIcon("createdAt")}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {messages && messages.map((msg) => (
-                <tr key={msg.id}>
-                  <td>{msg.name}</td>
-                  <td>{msg.email}</td>
-                  <td>{msg.content}</td>
-                  <td>{new Date(msg.createdAt).toLocaleString()}</td>
+        <div className="alt-card hover-lift" style={{ marginTop: 12 }}>
+          <div className="soft-divider" />
+          <div className="table-wrap">
+            <table className="glass-table">
+              <thead>
+                <tr>
+                  <th onClick={() => handleSort("name")} className="sortable-header">
+                    Name {getSortIcon("name")}
+                  </th>
+                  <th onClick={() => handleSort("email")} className="sortable-header">
+                    Email {getSortIcon("email")}
+                  </th>
+                  <th>Message</th>
+                  <th onClick={() => handleSort("createdAt")} className="sortable-header">
+                    <FaClock /> Date {getSortIcon("createdAt")}
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {messages && messages.map((msg) => (
+                  <tr key={msg.id}>
+                    <td>{msg.name}</td>
+                    <td>{msg.email}</td>
+                    <td>{msg.content}</td>
+                    <td>{new Date(msg.createdAt).toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
-      {/* Pagination Controls */}
       {pagination.totalPages > 1 && (
-        <div className="pagination-controls">
-          <div className="pagination-info">
-            Showing {pagination.page * pagination.size + 1} to {Math.min((pagination.page + 1) * pagination.size, pagination.totalElements)} of {pagination.totalElements} messages
-          </div>
-          <div className="pagination-buttons">
-            <button 
-              className="glass-btn" 
-              onClick={() => handlePageChange(0)}
-              disabled={!pagination.hasPrevious}
-            >
-              <FaChevronLeft /> First
-            </button>
-            <button 
-              className="glass-btn" 
-              onClick={() => handlePageChange(pagination.page - 1)}
-              disabled={!pagination.hasPrevious}
-            >
-              <FaChevronLeft /> Previous
-            </button>
-            <span className="page-info">
-              Page {pagination.page + 1} of {pagination.totalPages}
-            </span>
-            <button 
-              className="glass-btn" 
-              onClick={() => handlePageChange(pagination.page + 1)}
-              disabled={!pagination.hasNext}
-            >
-              Next <FaChevronRight />
-            </button>
-            <button 
-              className="glass-btn" 
-              onClick={() => handlePageChange(pagination.totalPages - 1)}
-              disabled={!pagination.hasNext}
-            >
-              Last <FaChevronRight />
-            </button>
+        <div className="alt-card" style={{ marginTop: 12 }}>
+          <div className="pagination-controls">
+            <div className="pagination-info">
+              Showing {pagination.page * pagination.size + 1} to {Math.min((pagination.page + 1) * pagination.size, pagination.totalElements)} of {pagination.totalElements} messages
+            </div>
+            <div className="pagination-buttons">
+              <button 
+                className="glass-btn" 
+                onClick={() => handlePageChange(0)}
+                disabled={!pagination.hasPrevious}
+              >
+                <FaChevronLeft /> First
+              </button>
+              <button 
+                className="glass-btn" 
+                onClick={() => handlePageChange(pagination.page - 1)}
+                disabled={!pagination.hasPrevious}
+              >
+                <FaChevronLeft /> Previous
+              </button>
+              <span className="page-info">
+                Page {pagination.page + 1} of {pagination.totalPages}
+              </span>
+              <button 
+                className="glass-btn" 
+                onClick={() => handlePageChange(pagination.page + 1)}
+                disabled={!pagination.hasNext}
+              >
+                Next <FaChevronRight />
+              </button>
+              <button 
+                className="glass-btn" 
+                onClick={() => handlePageChange(pagination.totalPages - 1)}
+                disabled={!pagination.hasNext}
+              >
+                Last <FaChevronRight />
+              </button>
+            </div>
           </div>
         </div>
       )}

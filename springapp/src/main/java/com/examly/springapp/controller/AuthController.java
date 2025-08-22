@@ -27,6 +27,8 @@ public class AuthController {
             // Validate role
             if (user.getRole() == null || user.getRole().trim().isEmpty()) {
                 user.setRole("EMPLOYEE"); // Default role
+            } else {
+                user.setRole(user.getRole().toUpperCase());
             }
             
             // Check if user already exists
@@ -42,9 +44,13 @@ public class AuthController {
             // Don't return password in response
             createdUser.setPassword(null);
             
+            // Generate JWT token like login
+            String token = jwtUtil.generateToken(createdUser.getEmail(), createdUser.getRole());
+            
             Map<String, Object> response = new HashMap<>();
             response.put("message", "User registered successfully");
             response.put("user", createdUser);
+            response.put("token", token);
             
             return ResponseEntity.ok(response);
         } catch (Exception e) {

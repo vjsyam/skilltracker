@@ -1,8 +1,9 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { authService } from "./services/authService";
 
 // Pages
 import Landing from "./pages/Landing";
@@ -14,6 +15,10 @@ import Departments from "./pages/Departments";
 import Skills from "./pages/Skills";
 import Reports from "./pages/Reports";
 import Messages from "./pages/Messages";
+import EmployeePortal from "./pages/EmployeePortal";
+import NewSkills from "./pages/NewSkills";
+import OngoingSkills from "./pages/OngoingSkills";
+import Users from "./pages/Users";
 
 // ✅ Layout wrapper to handle navbar/footer visibility
 function Layout({ children }) {
@@ -31,6 +36,20 @@ function Layout({ children }) {
   );
 }
 
+function AdminEmployeesOrRedirect() {
+  const isAdmin = authService.isAdmin();
+  if (!isAdmin) {
+    return <Navigate to="/me" replace />;
+  }
+  return <Employees />;
+}
+
+function OngoingOrRedirect() {
+  const isAdmin = authService.isAdmin();
+  if (isAdmin) return <Navigate to="/employees" replace />;
+  return <OngoingSkills />;
+}
+
 function App() {
   return (
     <Router>
@@ -43,11 +62,15 @@ function App() {
 
           {/* Protected Pages */}
           <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-          <Route path="/employees" element={<ProtectedRoute><Employees /></ProtectedRoute>} />
+          <Route path="/employees" element={<ProtectedRoute><AdminEmployeesOrRedirect /></ProtectedRoute>} />
+          <Route path="/me" element={<ProtectedRoute><EmployeePortal /></ProtectedRoute>} />
           <Route path="/departments" element={<ProtectedRoute><Departments /></ProtectedRoute>} />
           <Route path="/skills" element={<ProtectedRoute><Skills /></ProtectedRoute>} />
           <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
           <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+          <Route path="/new-skills" element={<ProtectedRoute><NewSkills /></ProtectedRoute>} />
+          <Route path="/ongoing" element={<ProtectedRoute><OngoingOrRedirect /></ProtectedRoute>} />
+          <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
         </Routes>
       </Layout>
     </Router>

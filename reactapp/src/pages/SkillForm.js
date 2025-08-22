@@ -33,15 +33,18 @@ export default function SkillForm({ existingData, onClose, onSave, isViewOnly = 
     <div className="modal-overlay fixed-overlay">
       <div className="modal glass centered-modal form-modal">
         <div className="modal-header">
-          <h2 className="heading-gradient">
-            <FaTag /> {isViewOnly ? "View Skill" : existingData ? "Edit Skill" : "Add Skill"}
-          </h2>
+          <div>
+            <h2 className="heading-gradient">
+              <FaTag /> {isViewOnly ? "View Skill" : existingData ? "Edit Skill" : "Add Skill"}
+            </h2>
+            <div className="form-header-badge">Catalog skill</div>
+          </div>
           <button className="close-btn" onClick={onClose}>
             <FaTimes />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="modal-body">
+        <form onSubmit={handleSubmit} className="modal-body form-modern">
           <div className="form-group">
             <label>
               <FaTag /> Skill Name

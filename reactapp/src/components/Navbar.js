@@ -20,6 +20,8 @@ export default function Navbar() {
     navigate("/");
   };
 
+  const isAdmin = user?.role === "ADMIN";
+
   return (
     <nav className="navbar glass">
       <div className="logo">
@@ -37,28 +39,46 @@ export default function Navbar() {
       </button>
 
       <ul className={menuOpen ? "active" : ""}>
-        <li>
-          <Link to="/employees" onClick={() => setMenuOpen(false)}>Employees</Link>
-        </li>
-        <li>
-          <Link to="/skills" onClick={() => setMenuOpen(false)}>Skills</Link>
-        </li>
-        <li>
-          <Link to="/departments" onClick={() => setMenuOpen(false)}>Departments</Link>
-        </li>
-        <li>
-          <Link to="/reports" onClick={() => setMenuOpen(false)}>Reports</Link>
-        </li>
-        <AdminOnly>
-          <li>
-            <Link to="/messages" onClick={() => setMenuOpen(false)}>Messages</Link>
-          </li>
-        </AdminOnly>
-        {/* <AdminOnly>
-          <li>
-            <Link to="/admin" onClick={() => setMenuOpen(false)}>Admin Panel</Link>
-          </li>
-        </AdminOnly> */}
+        {isAdmin ? (
+          <>
+            <li>
+              <Link to="/employees" onClick={() => setMenuOpen(false)}>Employees</Link>
+            </li>
+            <li>
+              <Link to="/skills" onClick={() => setMenuOpen(false)}>Skills</Link>
+            </li>
+            <li>
+              <Link to="/departments" onClick={() => setMenuOpen(false)}>Departments</Link>
+            </li>
+            <li>
+              <Link to="/reports" onClick={() => setMenuOpen(false)}>Reports</Link>
+            </li>
+            {/* Ongoing hidden for admin */}
+            <AdminOnly>
+              <li>
+                <Link to="/messages" onClick={() => setMenuOpen(false)}>Messages</Link>
+              </li>
+            </AdminOnly>
+            <li>
+              <Link to="/new-skills" onClick={() => setMenuOpen(false)}>New Skills</Link>
+            </li>
+            <li>
+              <Link to="/users" onClick={() => setMenuOpen(false)}>Users</Link>
+            </li>
+          </>
+        ) : (
+          <>
+            <li>
+              <Link to="/me" onClick={() => setMenuOpen(false)}>My Profile</Link>
+            </li>
+            <li>
+              <Link to="/ongoing" onClick={() => setMenuOpen(false)}>Ongoing</Link>
+            </li>
+            <li>
+              <Link to="/new-skills" onClick={() => setMenuOpen(false)}>New Skills</Link>
+            </li>
+          </>
+        )}
         {user && (
           <>
             <li className="user-info">

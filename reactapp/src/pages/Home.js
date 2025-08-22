@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import "../styles/homepage.css";
 import { sendMessage } from "../services/messageService";
@@ -8,8 +8,11 @@ import {
   FaChartBar,
   FaUserTie,
   FaClipboardCheck,
-  FaChartPie
+  FaChartPie,
+  FaIdBadge,
+  FaEnvelope
 } from "react-icons/fa";
+import { authService } from "../services/authService";
 
 export default function Homepage() {
   const [formData, setFormData] = useState({
@@ -19,6 +22,9 @@ export default function Homepage() {
   });
   const [status, setStatus] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const user = useMemo(() => authService.getCurrentUser(), []);
+  const isAdmin = user?.role === "ADMIN";
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -41,7 +47,6 @@ export default function Homepage() {
     }
   };
 
-  // ===== FEATURE DATA =====
   const primaryFeatures = [
     {
       icon: <FaUserGraduate />,
@@ -60,7 +65,7 @@ export default function Homepage() {
     }
   ];
 
-  const secondaryFeatures = [
+  const secondaryFeaturesAdmin = [
     {
       icon: <FaUserTie />,
       title: "Employee Management",
@@ -78,8 +83,49 @@ export default function Homepage() {
       title: "Reports & Insights",
       description: "Generate reports to understand capabilities.",
       link: "/reports"
+    },
+    {
+      icon: <FaUserFriends />,
+      title: "Departments",
+      description: "Organize teams and manage assignments.",
+      link: "/departments"
+    },
+    {
+      icon: <FaEnvelope />,
+      title: "Messages",
+      description: "Review incoming messages from users.",
+      link: "/messages"
+    },
+    {
+      icon: <FaIdBadge />,
+      title: "Users",
+      description: "Browse accounts available to link employees.",
+      link: "/users"
+    },
+    {
+      icon: <FaUserGraduate />,
+      title: "New Skills",
+      description: "Curate and add learning catalog items.",
+      link: "/new-skills"
     }
   ];
+
+  const secondaryFeaturesEmployee = [
+    {
+      icon: <FaIdBadge />,
+      title: "My Profile",
+      description: "View your department, manager, and skills.",
+      link: "/me"
+    },
+    {
+      icon: <FaUserGraduate />,
+      title: "Explore New Skills",
+      description: "Discover 100 skills and what they offer.",
+      link: "/new-skills"
+    }
+  ];
+
+  const secondaryFeatures = isAdmin ? secondaryFeaturesAdmin : secondaryFeaturesEmployee;
 
   return (
     <div className="homepage">
@@ -90,9 +136,6 @@ export default function Homepage() {
             Discover how our comprehensive skill tracking platform helps organizations 
             build stronger, more capable teams.
           </p>
-          {/* <Link to="/employees">
-            <button className="cta-btn">Get Started →</button>
-          </Link> */}
         </div>
         <div className="hero-image">
           <img
@@ -123,9 +166,9 @@ export default function Homepage() {
 
       <section className="secondary-features">
         <div className="section-header">
-          <h2>Explore More Features</h2>
+          <h2>{isAdmin ? "Explore More Features" : "Your Quick Links"}</h2>
           <p className="section-subtitle">
-            Additional tools to help you manage your workforce effectively
+            {isAdmin ? "Additional tools to help you manage your workforce effectively" : "Access your profile and discover skills"}
           </p>
         </div>
 
@@ -137,7 +180,7 @@ export default function Homepage() {
                 <h3>{feature.title}</h3>
                 <p>{feature.description}</p>
                 <Link to={feature.link} className="block-link">
-                  Explore <span>→</span>
+                  {isAdmin ? "Explore" : "Open"} <span>→</span>
                 </Link>
               </div>
             </div>
@@ -145,7 +188,6 @@ export default function Homepage() {
         </div>
       </section>
 
-      {/* ===== CONTACT FORM ===== */}
       <section className="contact-section glass">
         <h2>Connect with Admin</h2>
         <form className="contact-form" onSubmit={handleSubmit}>

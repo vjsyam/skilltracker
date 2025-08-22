@@ -1,52 +1,66 @@
 import React, { useState, useEffect } from "react";
 import "../styles/components.css";
 import { createDepartment, updateDepartment } from "../services/departmentService";
+import { getEmployees } from "../services/employeeService";
 import { FaSave, FaTimes, FaBuilding, FaUser } from "react-icons/fa";
 
 export default function DepartmentForm({ existingData, onClose, onSave, isViewOnly = false }) {
   const [name, setName] = useState("");
-  const [employeeIds, setEmployeeIds] = useState("");
+  const [selectedEmployeeIds, setSelectedEmployeeIds] = useState([]);
+  const [allEmployees, setAllEmployees] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await getEmployees(0, 1000);
+        const list = res?.data || res?.content || res || [];
+        setAllEmployees(Array.isArray(list) ? list : []);
+      } catch (e) { /* ignore */ }
+    })();
+  }, []);
 
   useEffect(() => {
     if (existingData) {
       setName(existingData.name || "");
-      if (existingData.employees) {
-        setEmployeeIds(existingData.employees.map(emp => emp.id).join(","));
-      }
+      const ids = Array.isArray(existingData.employees) ? existingData.employees.map(emp => emp.id) : [];
+      setSelectedEmployeeIds(ids);
+    } else {
+      setName("");
+      setSelectedEmployeeIds([]);
     }
   }, [existingData]);
 
+  const toggleEmployee = (id) => {
+    setSelectedEmployeeIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    const payload = { 
-      name,
-      employeeIds: employeeIds.split(",").map(id => id.trim()).filter(id => id)
-    };
+    const employees = selectedEmployeeIds.map(id => ({ id }));
+    const payload = { name, employees };
 
-    if (existingData) {
-      updateDepartment(existingData.id, payload)
-        .then(() => { onSave(); onClose(); })
-        .catch((err) => console.error(err));
-    } else {
-      createDepartment(payload)
-        .then(() => { onSave(); onClose(); })
-        .catch((err) => console.error(err));
-    }
+    const action = existingData ? updateDepartment(existingData.id, payload) : createDepartment(payload);
+    action
+      .then(() => { onSave(); onClose(); })
+      .catch((err) => console.error(err));
   };
 
   return (
     <div className="modal-overlay fixed-overlay">
       <div className="modal glass centered-modal form-modal">
         <div className="modal-header">
-          <h2 className="heading-gradient">
-            <FaBuilding /> {isViewOnly ? "View Department" : existingData ? "Edit Department" : "Add Department"}
-          </h2>
+          <div>
+            <h2 className="heading-gradient">
+              <FaBuilding /> {isViewOnly ? "View Department" : existingData ? "Edit Department" : "Add Department"}
+            </h2>
+            <div className="form-header-badge">Tip: Assign employees below</div>
+          </div>
           <button className="close-btn" onClick={onClose}>
             <FaTimes />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="modal-body">
+        <form onSubmit={handleSubmit} className="modal-body form-modern">
           <div className="form-group">
             <label>
               <FaBuilding /> Department Name
@@ -62,16 +76,21 @@ export default function DepartmentForm({ existingData, onClose, onSave, isViewOn
           </div>
 
           <div className="form-group">
-            <label>
-              <FaUser /> Employee IDs (comma separated)
-            </label>
-            <input
-              type="text"
-              placeholder="Enter employee IDs (e.g., 1, 2, 3)"
-              value={employeeIds}
-              onChange={(e) => setEmployeeIds(e.target.value)}
-              disabled={isViewOnly}
-            />
+            <label className="icon-title"><FaUser /> Assign Employees</label>
+            <div className="subtle-bg" style={{ maxHeight: 220, overflowY: 'auto' }}>
+              {allEmployees.map(emp => {
+                const active = selectedEmployeeIds.includes(emp.id);
+                return (
+                  <span
+                    key={emp.id}
+                    className={`chip-toggle ${active ? 'active' : ''}`}
+                    onClick={() => !isViewOnly && toggleEmployee(emp.id)}
+                  >
+                    {emp.userName || `Employee #${emp.id}`}
+                  </span>
+                );
+              })}
+            </div>
           </div>
 
           <div className="modal-actions">
