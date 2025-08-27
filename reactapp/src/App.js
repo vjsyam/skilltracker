@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -24,6 +24,34 @@ import Users from "./pages/Users";
 function Layout({ children }) {
   const location = useLocation();
   const hideNavAndFooter = ["/", "/login", "/signup"].includes(location.pathname);
+  const [showFooter, setShowFooter] = useState(false);
+  const rafRef = useRef(0);
+
+  useEffect(() => {
+    const onScroll = () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        const scrolled = window.scrollY || document.documentElement.scrollTop;
+        const viewport = window.innerHeight;
+        const full = document.documentElement.scrollHeight;
+        const distanceFromBottom = full - (scrolled + viewport);
+        // Hysteresis: show at <= 120px from bottom; hide only when > 240px
+        setShowFooter(prev => {
+          if (!prev && distanceFromBottom <= 120) return true;
+          if (prev && distanceFromBottom > 240) return false;
+          return prev;
+        });
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [location.pathname]);
+
+  const shouldShowFooter = !hideNavAndFooter && location.pathname === "/home" && showFooter;
 
   return (
     <div className="app">
@@ -31,7 +59,9 @@ function Layout({ children }) {
       <div className={hideNavAndFooter ? "page-full" : "main-content"}>
         {children}
       </div>
-      {!hideNavAndFooter && <Footer />}
+      <div className={`footer-fixed${shouldShowFooter ? " show" : ""}`}>
+        {shouldShowFooter && <Footer />}
+      </div>
     </div>
   );
 }

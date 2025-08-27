@@ -24,6 +24,9 @@ public class EmployeeSkillService {
     @Autowired
     private SkillRepository skillRepository;
 
+    @Autowired
+    private LearningTaskService learningTaskService;
+
     public List<EmployeeSkill> getAllEmployeeSkills() {
         return employeeSkillRepository.findAll();
     }
@@ -47,7 +50,10 @@ public class EmployeeSkillService {
             employeeSkill.setSkill(skill);
         }
 
-        return employeeSkillRepository.save(employeeSkill);
+        EmployeeSkill saved = employeeSkillRepository.save(employeeSkill);
+        // Optionally generate tasks for new link
+        learningTaskService.generateDefaultTasksFor(saved);
+        return saved;
     }
 
     public EmployeeSkill updateEmployeeSkill(Long id, EmployeeSkill updated) {
@@ -74,5 +80,35 @@ public class EmployeeSkillService {
 
     public void deleteEmployeeSkill(Long id) {
         employeeSkillRepository.deleteById(id);
+    }
+
+    public List<EmployeeSkill> getByEmployeeId(Long employeeId) {
+        return employeeSkillRepository.findByEmployeeId(employeeId);
+    }
+
+    public EmployeeSkill promoteIfNotExists(Long employeeId, Long skillId) {
+        Employee emp = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found with id: " + employeeId));
+        Skill skill = skillRepository.findById(skillId)
+                .orElseThrow(() -> new RuntimeException("Skill not found with id: " + skillId));
+
+        boolean exists = employeeSkillRepository.existsByEmployeeIdAndSkillId(employeeId, skillId);
+        if (exists) {
+            // Already linked, return existing or create a lightweight wrapper
+            return employeeSkillRepository.findByEmployeeId(employeeId).stream()
+                    .filter(es -> es.getSkill() != null && es.getSkill().getId().equals(skillId))
+                    .findFirst()
+                    .orElseGet(() -> {
+                        EmployeeSkill es = new EmployeeSkill();
+                        es.setEmployee(emp);
+                        es.setSkill(skill);
+                        return es;
+                    });
+        }
+
+        EmployeeSkill es = new EmployeeSkill();
+        es.setEmployee(emp);
+        es.setSkill(skill);
+        return employeeSkillRepository.save(es);
     }
 }

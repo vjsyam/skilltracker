@@ -22,6 +22,9 @@ import {
 } from "react-icons/fa";
 import { authService } from "../services/authService";
 import FloatingParticles from "../components/FloatingParticles";
+import Footer from "../components/Footer";
+import { getEmployees } from "../services/employeeService";
+import { fetchEmployeeSkillsByEmployee } from "../services/employeeSkillLinkService";
 
 // Welcome Animation Component
 function WelcomeAnimation({ userName, isVisible }) {
@@ -40,17 +43,16 @@ function WelcomeAnimation({ userName, isVisible }) {
 }
 
 // Quick Stats Component
-function QuickStats({ isAdmin, reportData }) {
+function QuickStats({ isAdmin, reportData, employeeStats }) {
   const stats = isAdmin ? [
     { icon: <FaUsers />, label: "Total Employees", value: reportData?.totalEmployees || "0", trend: "Live", color: "#FF6B6B" },
     { icon: <FaClipboardCheck />, label: "Active Skills", value: reportData?.totalSkills || "0", trend: "Live", color: "#FF9F9F" },
     { icon: <FaChartPie />, label: "Departments", value: reportData?.totalDepartments || "0", trend: "Live", color: "#FFD93D" },
     { icon: <FaChartLine />, label: "Growth Rate", value: "23%", trend: "+8%", color: "#00C851" }
   ] : [
-    { icon: <FaStar />, label: "My Skills", value: "12", trend: "+3", color: "#FF6B6B" },
-    { icon: <FaLightbulb />, label: "Learning", value: "4", trend: "Active", color: "#FF9F9F" },
-    { icon: <FaChartBar />, label: "Progress", value: "78%", trend: "+5%", color: "#FFD93D" },
-    { icon: <FaRocket />, label: "Goals", value: "3", trend: "On Track", color: "#00C851" }
+    { icon: <FaStar />, label: "My Skills", value: String(employeeStats?.profileSkills ?? 0), trend: "Live", color: "#FF6B6B" },
+    { icon: <FaLightbulb />, label: "Learning", value: String(employeeStats?.ongoing ?? 0), trend: "Active", color: "#FF9F9F" },
+    { icon: <FaChartBar />, label: "Progress", value: `${employeeStats?.avgProgress ?? 0}%`, trend: "Live", color: "#FFD93D" }
   ];
 
   return (
@@ -76,15 +78,15 @@ function QuickStats({ isAdmin, reportData }) {
 // Recent Activity Component
 function RecentActivity({ isAdmin }) {
   const activities = isAdmin ? [
-    { type: "employee", message: "New employee John Doe added", time: "2 minutes ago", icon: <FaUserTie /> },
-    { type: "skill", message: "React.js skill updated", time: "15 minutes ago", icon: <FaClipboardCheck /> },
+    { type: "employee", message: "New employee added", time: "2 minutes ago", icon: <FaUserTie /> },
+    { type: "skill", message: "Skill catalog updated", time: "15 minutes ago", icon: <FaClipboardCheck /> },
     { type: "report", message: "Monthly report generated", time: "1 hour ago", icon: <FaChartPie /> },
-    { type: "message", message: "New message from Sarah", time: "2 hours ago", icon: <FaEnvelope /> }
+    { type: "message", message: "New message received", time: "2 hours ago", icon: <FaEnvelope /> }
   ] : [
-    { type: "skill", message: "Added Python to your skills", time: "1 hour ago", icon: <FaStar /> },
-    { type: "learning", message: "Completed React basics module", time: "3 hours ago", icon: <FaLightbulb /> },
-    { type: "goal", message: "Achieved 75% of monthly goal", time: "1 day ago", icon: <FaRocket /> },
-    { type: "feedback", message: "Received positive feedback", time: "2 days ago", icon: <FaBell /> }
+    { type: "skill", message: "Learning in progress", time: "1 hour ago", icon: <FaStar /> },
+    { type: "learning", message: "Completed a module", time: "3 hours ago", icon: <FaLightbulb /> },
+    { type: "goal", message: "Progress increased", time: "1 day ago", icon: <FaRocket /> },
+    { type: "feedback", message: "New feedback available", time: "2 days ago", icon: <FaBell /> }
   ];
 
   return (
@@ -138,12 +140,27 @@ export default function Homepage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [reportData, setReportData] = useState(null);
+  const [employeeStats, setEmployeeStats] = useState({ profileSkills: 0, ongoing: 0, avgProgress: 0, goals: 0 });
+  const [showFooter, setShowFooter] = useState(false);
 
   const user = useMemo(() => authService.getCurrentUser(), []);
   const isAdmin = user?.role === "ADMIN";
 
   useEffect(() => {
     setIsVisible(true);
+  }, []);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const scrolled = window.scrollY || document.documentElement.scrollTop;
+      const viewport = window.innerHeight;
+      const full = document.documentElement.scrollHeight;
+      const nearBottom = scrolled + viewport >= full - 80; // near bottom
+      setShowFooter(nearBottom);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   useEffect(() => {
@@ -182,6 +199,27 @@ export default function Homepage() {
       fetchReports();
     }
   }, [isAdmin]);
+
+  useEffect(() => {
+    async function loadEmployeeStats() {
+      try {
+        const res = await getEmployees(0, 500);
+        const employees = res?.content || res?.data || res || [];
+        const me = Array.isArray(employees) ? employees.find(e => e.userId === (user?.id || user?.userId)) : null;
+        if (!me?.id) return;
+        const links = await fetchEmployeeSkillsByEmployee(me.id);
+        const profileSkills = Array.isArray(links) ? links.length : 0;
+        // Ongoing from local for now
+        const ongoingRaw = localStorage.getItem('ongoingSkills');
+        const ongoing = ongoingRaw ? JSON.parse(ongoingRaw) : [];
+        const avgProgress = ongoing.length > 0 ? Math.round(ongoing.reduce((a, s) => a + (s.progress || 0), 0) / ongoing.length) : 0;
+        setEmployeeStats({ profileSkills, ongoing: ongoing.length, avgProgress, goals: 0 });
+      } catch (e) {
+        // ignore silently
+      }
+    }
+    if (!isAdmin) loadEmployeeStats();
+  }, [isAdmin, user]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -289,7 +327,7 @@ export default function Homepage() {
       
       <StatusIndicator status="online" />
 
-      <QuickStats isAdmin={isAdmin} reportData={reportData} />
+      <QuickStats isAdmin={isAdmin} reportData={reportData} employeeStats={employeeStats} />
 
       <div className="homepage-content">
         <section className="primary-features">
@@ -360,6 +398,8 @@ export default function Homepage() {
           </section>
         </div>
       </div>
+
+      {showFooter && <Footer />}
     </div>
   );
 }

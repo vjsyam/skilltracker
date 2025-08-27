@@ -14,6 +14,20 @@ html, body, #root {
   flex: 1; /* take up all remaining space, pushes footer down */
 }
 
+/* Fixed footer container with slide-in */
+.footer-fixed {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: -120px; /* hidden below */
+  z-index: 1000;
+  transition: transform 260ms ease, bottom 260ms ease;
+  transform: translateY(120px);
+}
+.footer-fixed.show {
+  bottom: 0;
+  transform: translateY(0);
+}
 
 /* ------------------- NAVBAR ------------------- */
 .navbar {

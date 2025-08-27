@@ -41,4 +41,15 @@ public class EmployeeSkillController {
     public void deleteEmployeeSkill(@PathVariable Long id) {
         employeeSkillService.deleteEmployeeSkill(id);
     }
+
+    @GetMapping("/employee/{employeeId}")
+    public List<EmployeeSkill> getByEmployee(@PathVariable Long employeeId) {
+        return employeeSkillService.getByEmployeeId(employeeId);
+    }
+
+    // Promote a skill to profile once learning is complete (idempotent)
+    @PostMapping("/promote")
+    public EmployeeSkill promote(@RequestParam Long employeeId, @RequestParam Long skillId) {
+        return employeeSkillService.promoteIfNotExists(employeeId, skillId);
+    }
 }

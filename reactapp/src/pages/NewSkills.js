@@ -1,6 +1,9 @@
 import React, { useMemo, useState, useEffect } from "react";
 import "../styles/components.css";
 import { authService } from "../services/authService";
+import { getEmployees } from "../services/employeeService";
+import { createLearningLink } from "../services/employeeSkillLinkService";
+import { getSkills } from "../services/skillService";
 
 const DEFAULT_SKILLS = [
   { id: 1, name: "JavaScript", category: "Programming", description: "Versatile language for web development (frontend and backend)." },
@@ -125,6 +128,16 @@ function addToLocalSets(key, item, uniqueKey = 'id') {
   return arr;
 }
 
+function deriveCategory(name = "", description = "") {
+  const hay = `${name} ${description}`.toLowerCase();
+  if (/(react|angular|vue|css|frontend|ui)/.test(hay)) return "Frontend";
+  if (/(spring|java|node|express|backend|api)/.test(hay)) return "Backend";
+  if (/(mysql|postgres|mongodb|database|sql|redis)/.test(hay)) return "Database";
+  if (/(docker|kubernetes|devops|ci\/cd|terraform|nginx)/.test(hay)) return "DevOps";
+  if (/(security|oauth|jwt|auth)/.test(hay)) return "Security";
+  return "General";
+}
+
 export default function NewSkills() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
@@ -133,36 +146,123 @@ export default function NewSkills() {
   const isAdmin = authService.isAdmin();
 
   useEffect(() => {
-    setSkills(loadSkills());
+    (async () => {
+      try {
+        const backend = await getSkills(0, 1000);
+        const list = Array.isArray(backend) ? backend : (backend?.content || []);
+        if (Array.isArray(list) && list.length > 0) {
+          const normalized = list.map(s => ({
+            id: s.id,
+            name: s.name,
+            description: s.description || "",
+            category: deriveCategory(s.name, s.description)
+          }));
+          setSkills(normalized);
+          return;
+        }
+      } catch {}
+      setSkills(loadSkills());
+    })();
   }, []);
 
   const categories = useMemo(() => {
-    const set = new Set(["All", ...skills.map(s => s.category)]);
+    const set = new Set(["All", ...skills.map(s => s.category || deriveCategory(s.name, s.description))]);
     return Array.from(set);
   }, [skills]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return skills.filter(s => {
-      const okCategory = category === "All" || s.category === category;
-      const okQuery = !q || s.name.toLowerCase().includes(q) || s.description.toLowerCase().includes(q);
+      const cat = s.category || deriveCategory(s.name, s.description);
+      const okCategory = category === "All" || cat === category;
+      const okQuery = !q || s.name.toLowerCase().includes(q) || (s.description || "").toLowerCase().includes(q);
       return okCategory && okQuery;
     });
   }, [query, category, skills]);
 
-  const handleAdd = (skill) => {
-    addToLocalSets('mySkills', { id: skill.id, name: skill.name });
-    addToLocalSets('ongoingSkills', { 
+  function generateTasksFor(skillName) {
+    const verbs = ["Read", "Watch", "Complete", "Build", "Refactor", "Implement", "Document", "Review", "Pair", "Practice", "Benchmark", "Debug"];
+    const objects = [
+      `intro to ${skillName}`,
+      `an advanced guide on ${skillName}`,
+      `a mini project using ${skillName}`,
+      `${skillName} best practices`,
+      `${skillName} patterns`,
+      `tests for a ${skillName} project`,
+      `${skillName} official docs`,
+      `${skillName} community resources`,
+      `a kata with ${skillName}`,
+      `performance tips for ${skillName}`,
+      `error handling in ${skillName}`
+    ];
+    const count = Math.floor(Math.random() * 4) + 7; // 7-10
+    const pool = [];
+    for (let i = 0; i < verbs.length; i++) {
+      const v = verbs[i];
+      const o = objects[Math.floor(Math.random() * objects.length)];
+      pool.push(`${v} ${o}`);
+    }
+    const shuffled = pool.sort(() => Math.random() - 0.5).slice(0, count);
+    return shuffled.map((t, i) => ({ id: i + 1, title: t, done: false }));
+  }
+
+  const handleAdd = async (skill) => {
+    // Prevent duplicates: if already in ongoing or already in mySkills, block
+    const ongoingRaw = localStorage.getItem('ongoingSkills');
+    const mySkillsRaw = localStorage.getItem('mySkills');
+    const ongoing = ongoingRaw ? JSON.parse(ongoingRaw) : [];
+    const mySkills = mySkillsRaw ? JSON.parse(mySkillsRaw) : [];
+
+    if (ongoing.some(s => s.id === skill.id)) {
+      alert(`${skill.name} is already in your ongoing learning.`);
+      return;
+    }
+    if (mySkills.some(s => s.id === skill.id)) {
+      alert(`${skill.name} is already in your profile skills.`);
+      return;
+    }
+
+    const newOngoingItem = {
       id: skill.id,
       name: skill.name,
-      progress: Math.floor(Math.random() * 40) + 10,
-      tasks: [
-        { id: 1, title: `Read intro to ${skill.name}`, done: Math.random() > 0.5 },
-        { id: 2, title: `Finish a tutorial on ${skill.name}`, done: Math.random() > 0.5 },
-        { id: 3, title: `Build a mini project with ${skill.name}`, done: false },
-      ]
-    });
-    alert(`${skill.name} added to your skills and ongoing list!`);
+      category: skill.category,
+      description: skill.description,
+      progress: 0,
+      tasks: generateTasksFor(skill.name)
+    };
+
+    let next = [...ongoing, newOngoingItem];
+    localStorage.setItem('ongoingSkills', JSON.stringify(next));
+
+    // Also create backend link to generate persisted tasks (best-effort) and record backend ids for accurate promotion
+    try {
+      const res = await getEmployees(0, 500);
+      const list = res?.content || res?.data || res || [];
+      const currentUser = authService.getCurrentUser();
+      const me = Array.isArray(list) ? list.find(e => e.userId === (currentUser?.id || currentUser?.userId)) : null;
+      if (me?.id) {
+        // map to backend skill id by name (in case local ids differ)
+        let backendId = skill.id;
+        try {
+          const backendList = await getSkills(0, 1000);
+          const arr = backendList?.content || backendList || [];
+          const match = Array.isArray(arr) ? arr.find(s => s.name?.toLowerCase() === skill.name?.toLowerCase()) : null;
+          backendId = match?.id || backendId;
+        } catch {}
+        const link = await createLearningLink(me.id, backendId);
+        // Update stored ongoing item with backend mapping
+        next = next.map(s => s.id === skill.id ? {
+          ...s,
+          employeeSkillId: link?.id,
+          backendSkillId: link?.skill?.id || backendId,
+        } : s);
+        localStorage.setItem('ongoingSkills', JSON.stringify(next));
+      }
+    } catch (e) {
+      // non-blocking: continue with local flow
+    }
+
+    alert(`${skill.name} added to your ongoing learning. Complete all tasks to add it to your profile.`);
   };
 
   const [newSkill, setNewSkill] = useState({ name: "", category: "Programming", description: "" });
@@ -215,10 +315,10 @@ export default function NewSkills() {
         {filtered.map(s => (
           <div key={s.id} className="alt-card hover-lift">
             <h3>{s.name}</h3>
-            <p><em>{s.category}</em></p>
+            <p><em>{s.category || deriveCategory(s.name, s.description)}</em></p>
             <p>{s.description}</p>
             <button className="glass-btn" onClick={() => handleAdd(s)}>
-              Add to My Skills
+              Add to Ongoing
             </button>
           </div>
         ))}
